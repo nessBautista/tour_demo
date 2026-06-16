@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 640" font-family="-apple-system, 'Segoe UI', Roboto, sans-serif" role="img" aria-label="Touring funnel: six narrowing stages from tour intent to multi-tour loop, with the post-tour reflection stage highlighted as the leak — a cognition problem the product attacks.">
+  <defs>
+    <style>
+      .serif { font-family: 'Source Serif 4', Georgia, 'Times New Roman', serif; }
+      .mono  { font-family: 'SF Mono', Menlo, ui-monospace, monospace; }
+    </style>
+  </defs>
+
+  <!-- canvas -->
+  <rect x="0" y="0" width="1000" height="640" rx="10" fill="#ECEFF1"/>
+
+  <!-- header -->
+  <text x="50" y="58" class="mono" font-size="13" font-weight="600" letter-spacing="2" fill="#0041D9">THE FUNNEL · A PRODUCT LENS</text>
+  <text x="50" y="100" class="serif" font-size="30" font-weight="600" fill="#111116">Touring as a funnel — one leak worth attacking.</text>
+
+  <!-- ===== funnel stages (centered at x=400, narrowing) ===== -->
+  <!-- 1 -->
+  <rect x="50"  y="150" width="700" height="56" rx="10" fill="#F8FAFB" stroke="#D2D8DC"/>
+  <text x="72"  y="184" font-size="17" fill="#2C3A47">Tour intent</text>
+  <text x="734" y="184" class="mono" font-size="11.5" fill="#6E7B86" text-anchor="end">listing &#8594; request</text>
+
+  <!-- 2 -->
+  <rect x="90"  y="218" width="620" height="56" rx="10" fill="#F8FAFB" stroke="#D2D8DC"/>
+  <text x="112" y="252" font-size="17" fill="#2C3A47">Tour request</text>
+  <text x="694" y="252" class="mono" font-size="11.5" fill="#6E7B86" text-anchor="end">request completion</text>
+
+  <!-- 3 -->
+  <rect x="130" y="286" width="540" height="56" rx="10" fill="#F8FAFB" stroke="#D2D8DC"/>
+  <text x="152" y="320" font-size="17" fill="#2C3A47">Scheduling &amp; matching</text>
+  <text x="654" y="320" class="mono" font-size="11.5" fill="#6E7B86" text-anchor="end">request &#8594; confirmation</text>
+
+  <!-- 4 -->
+  <rect x="170" y="354" width="460" height="56" rx="10" fill="#F8FAFB" stroke="#D2D8DC"/>
+  <text x="192" y="388" font-size="17" fill="#2C3A47">Pre-tour prep</text>
+  <text x="614" y="388" class="mono" font-size="11.5" fill="#6E7B86" text-anchor="end">confirmation &#8594; attendance</text>
+
+  <!-- 5 — THE LEAK -->
+  <rect x="210" y="422" width="380" height="56" rx="10" fill="#FFF4F1" stroke="#FF6F61" stroke-width="2"/>
+  <text x="232" y="456" font-size="17" font-weight="600" fill="#111116">Post-tour reflection</text>
+  <rect x="496" y="438" width="80" height="24" rx="12" fill="#FF6F61"/>
+  <text x="536" y="454" class="mono" font-size="10" font-weight="600" letter-spacing="1" fill="#FFFFFF" text-anchor="middle">THE LEAK</text>
+
+  <!-- 6 -->
+  <rect x="250" y="490" width="300" height="56" rx="10" fill="#F8FAFB" stroke="#D2D8DC"/>
+  <text x="272" y="524" font-size="17" fill="#2C3A47">Multi-tour loop</text>
+  <text x="534" y="524" class="mono" font-size="11" fill="#6E7B86" text-anchor="end">tours to a decision</text>
+
+  <!-- ===== leak callout (right) ===== -->
+  <line x1="590" y1="450" x2="700" y2="450" stroke="#FF6F61" stroke-width="2"/>
+  <circle cx="590" cy="450" r="3.5" fill="#FF6F61"/>
+  <rect x="700" y="416" width="285" height="80" rx="12" fill="#FFF4F1" stroke="#FF6F61" stroke-width="2"/>
+  <text x="716" y="440" class="mono" font-size="9.5" font-weight="600" letter-spacing="1.5" fill="#C44536">NORTH-STAR · DECISION EFFICIENCY</text>
+  <text x="716" y="462" class="mono" font-size="13" font-weight="600" fill="#C44536">completed tour &#8594;</text>
+  <text x="716" y="482" class="mono" font-size="13" font-weight="600" fill="#C44536">confident next step</text>
+
+  <!-- ===== caption ===== -->
+  <text x="50" y="588" font-size="15" fill="#2C3A47">Upstream stages are <tspan font-weight="700">coordination</tspan> problems. Post-tour reflection is a <tspan font-weight="700">cognition</tspan> problem —</text>
+  <text x="50" y="610" font-size="15" fill="#2C3A47">exactly where an AI-native product earns its place.</text>
+</svg>
