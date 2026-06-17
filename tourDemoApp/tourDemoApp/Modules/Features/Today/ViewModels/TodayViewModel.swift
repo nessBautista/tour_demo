@@ -1,6 +1,6 @@
 //
 //  TodayViewModel.swift
-//  tourDemoApp — Modules/Features/Today
+//  tourDemoApp — Modules/Features/Today/ViewModels
 //
 //  State-Driven MVVM for the Today listings (iOS architecture §1/§4). Fetches
 //  homes through the injected `HomesProviding` seam — never Supabase directly.

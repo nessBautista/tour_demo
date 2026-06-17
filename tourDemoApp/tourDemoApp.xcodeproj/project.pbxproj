@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		CCAA33333333333333333333 /* VoiceExtraction in Frameworks */ = {isa = PBXBuildFile; productRef = CCAA22222222222222222222 /* VoiceExtraction */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		CC33184D2FE31F860094F68A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -52,6 +56,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CCAA33333333333333333333 /* VoiceExtraction in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -112,6 +117,7 @@
 			);
 			name = tourDemoApp;
 			packageProductDependencies = (
+				CCAA22222222222222222222 /* VoiceExtraction */,
 			);
 			productName = tourDemoApp;
 			productReference = CC33183F2FE31F850094F68A /* tourDemoApp.app */;
@@ -195,6 +201,9 @@
 			);
 			mainGroup = CC3318362FE31F850094F68A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				CCAA11111111111111111111 /* XCLocalSwiftPackageReference "../voice-extraction" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CC3318402FE31F850094F68A /* Products */;
 			projectDirPath = "";
@@ -398,6 +407,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Tour Debrief uses the microphone to capture your spoken preferences and debriefs.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Tour Debrief transcribes your voice on-device to build and update your buyer profile.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -442,6 +453,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Tour Debrief uses the microphone to capture your spoken preferences and debriefs.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Tour Debrief transcribes your voice on-device to build and update your buyer profile.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -615,6 +628,21 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		CCAA11111111111111111111 /* XCLocalSwiftPackageReference "../voice-extraction" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../voice-extraction";
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CCAA22222222222222222222 /* VoiceExtraction */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCAA11111111111111111111 /* XCLocalSwiftPackageReference "../voice-extraction" */;
+			productName = VoiceExtraction;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = CC3318372FE31F850094F68A /* Project object */;
 }

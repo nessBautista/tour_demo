@@ -1,13 +1,14 @@
 //
 //  HomeListCard.swift
-//  tourDemoApp — Modules/Features/Today
+//  tourDemoApp — UI/Components
 //
-//  One listing on the Today screen: a photo (async-loaded, with a placeholder),
-//  address, price, and the bed/bath/sqft spec. Feature-specific, so it lives with
-//  Today and is built from design tokens (iOS architecture §3.2). A dumb renderer
-//  of a `Home` — no actions yet.
+//  A listing card: photo (async-loaded, with a placeholder), address, price, and
+//  the bed/bath/sqft spec. A pure renderer of the Core `Home` value type — no
+//  feature copy, no state — so it's reusable across screens (Today now, Compare
+//  later) and lives in the design system. UI may depend on Core (architecture §3.2).
 //
 
+import Foundation
 import SwiftUI
 
 struct HomeListCard: View {
@@ -99,10 +100,21 @@ struct HomeListCard: View {
     }
 }
 
+// Preview-only sample data — inline `Home` (Core) values, so this UI component
+// never reaches into a Service.
+private let previewHomes: [Home] = [
+    Home(id: UUID(), address: "412 Alder Court, Maple Grove", price: 485_000,
+         beds: 3, baths: 2, sqft: 1_840,
+         headline: "Sun-drenched corner lot with a big yard", imageURL: nil),
+    Home(id: UUID(), address: "1735 Bellview Avenue, Old Town", price: 449_000,
+         beds: 4, baths: 1.5, sqft: 1_820,
+         headline: "Character craftsman on a quiet street", imageURL: nil),
+]
+
 #Preview {
     ScrollView {
         LazyVStack(spacing: Spacing.l) {
-            ForEach(FixtureHomesService.demoHomes) { HomeListCard(home: $0) }
+            ForEach(previewHomes) { HomeListCard(home: $0) }
         }
         .padding()
     }

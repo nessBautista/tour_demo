@@ -1,6 +1,6 @@
 //
 //  TodayView.swift
-//  tourDemoApp — Modules/Features/Today
+//  tourDemoApp — Modules/Features/Today/UI
 //
 //  The Today tab: the home listings. A dumb renderer of TodayViewModel.state —
 //  it switches over the load phase and lays out cards; all data and intents go
