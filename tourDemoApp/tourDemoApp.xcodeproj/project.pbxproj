@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		CCAA33333333333333333333 /* VoiceExtraction in Frameworks */ = {isa = PBXBuildFile; productRef = CCAA22222222222222222222 /* VoiceExtraction */; };
+		CCAA66666666666666666666 /* EventLog in Frameworks */ = {isa = PBXBuildFile; productRef = CCAA55555555555555555555 /* EventLog */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,6 +58,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CCAA33333333333333333333 /* VoiceExtraction in Frameworks */,
+				CCAA66666666666666666666 /* EventLog in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -118,6 +120,7 @@
 			name = tourDemoApp;
 			packageProductDependencies = (
 				CCAA22222222222222222222 /* VoiceExtraction */,
+				CCAA55555555555555555555 /* EventLog */,
 			);
 			productName = tourDemoApp;
 			productReference = CC33183F2FE31F850094F68A /* tourDemoApp.app */;
@@ -203,6 +206,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				CCAA11111111111111111111 /* XCLocalSwiftPackageReference "../voice-extraction" */,
+				CCAA44444444444444444444 /* XCLocalSwiftPackageReference "../event-log" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CC3318402FE31F850094F68A /* Products */;
@@ -634,6 +638,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../voice-extraction";
 		};
+		CCAA44444444444444444444 /* XCLocalSwiftPackageReference "../event-log" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../event-log";
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -641,6 +649,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CCAA11111111111111111111 /* XCLocalSwiftPackageReference "../voice-extraction" */;
 			productName = VoiceExtraction;
+		};
+		CCAA55555555555555555555 /* EventLog */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCAA44444444444444444444 /* XCLocalSwiftPackageReference "../event-log" */;
+			productName = EventLog;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

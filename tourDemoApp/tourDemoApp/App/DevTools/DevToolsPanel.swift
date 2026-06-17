@@ -9,13 +9,15 @@
 
 #if DEBUG
 import SwiftUI
+import EventLog
 
 struct DevToolsPanel: View {
     @Bindable var dev: DevTools
-    @State private var tab: Tab = .actions
+    @State private var tab: Tab = .events
 
     enum Tab: String, CaseIterable, Identifiable {
         case actions = "Actions"
+        case events = "Events"
         case theme = "Palette"
         case tokens = "Tokens"
         case logs = "Logs"
@@ -40,6 +42,7 @@ struct DevToolsPanel: View {
 
                 switch tab {
                 case .actions: DevActionsView(dev: dev, onRan: close)
+                case .events: DevEventsView(store: dev.eventStore)
                 case .theme: DevThemeView()
                 case .tokens: DevTokenGallery()
                 case .logs: DevLogView()
@@ -110,6 +113,123 @@ private struct DevActionsView: View {
             }
             .padding()
         }
+    }
+}
+
+// MARK: - Event stream (EventLog)
+
+private struct DevEventsView: View {
+    let store: InMemoryEventSink?
+    @State private var events: [Event] = []
+
+    private var summary: InferenceSummary {
+        events.inferenceSummary(pricing: .anthropicJune2026)
+    }
+
+    var body: some View {
+        VStack(spacing: 0) {
+            header
+            Divider()
+            if store == nil {
+                ContentUnavailableView("No store wired", systemImage: "bolt.horizontal.circle")
+                    .frame(maxHeight: .infinity)
+            } else if events.isEmpty {
+                ContentUnavailableView(
+                    "No events yet",
+                    systemImage: "list.bullet.rectangle",
+                    description: Text("Walk the onboarding or Today flow, then reopen.")
+                )
+                .frame(maxHeight: .infinity)
+            } else {
+                list
+            }
+        }
+        .onAppear(perform: reload)
+    }
+
+    private var header: some View {
+        HStack(spacing: 12) {
+            Text("\(events.count) event\(events.count == 1 ? "" : "s")")
+                .font(.caption).foregroundStyle(.secondary)
+            if summary.calls > 0 {
+                Text("· \(summary.calls) inference · \(summary.totalTokens) tok · \(costText)")
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+            Spacer()
+            Button("Refresh", action: reload).font(.caption)
+            Button("Clear") { store?.clear(); reload() }
+                .font(.caption).disabled(events.isEmpty)
+        }
+        .padding(.horizontal).padding(.vertical, 8)
+    }
+
+    private var list: some View {
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                ForEach(events.reversed()) { event in
+                    EventRow(event: event)
+                    Divider()
+                }
+            }
+        }
+    }
+
+    private var costText: String {
+        "$" + String(format: "%.4f", summary.totalCostUSD)
+    }
+
+    private func reload() {
+        events = store?.events ?? []
+    }
+}
+
+private struct EventRow: View {
+    let event: Event
+
+    var body: some View {
+        HStack(alignment: .firstTextBaseline, spacing: 8) {
+            Text(badge).font(.caption2.monospaced())
+                .foregroundStyle(color)
+                .frame(width: 22, alignment: .leading)
+            VStack(alignment: .leading, spacing: 2) {
+                Text(event.name)
+                    .font(.system(.caption, design: .monospaced))
+                    .textSelection(.enabled)
+                if let detail { Text(detail).font(.caption2).foregroundStyle(.secondary) }
+            }
+            Spacer(minLength: 0)
+            Text(event.timestamp, style: .time).font(.caption2).foregroundStyle(.secondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal).padding(.vertical, 6)
+    }
+
+    private var badge: String {
+        switch event.category {
+        case .product:   "•"
+        case .inference: "∑"
+        case .system:    "⚙"
+        }
+    }
+
+    private var color: Color {
+        switch event.category {
+        case .product:   .blue
+        case .inference: .purple
+        case .system:    .secondary
+        }
+    }
+
+    private var detail: String? {
+        var parts: [String] = []
+        if let m = event.inference {
+            parts.append("\(m.model) · \(m.totalTokens) tok · \(m.latencyMS) ms")
+        }
+        if !event.properties.isEmpty {
+            parts.append(event.properties.sorted(by: { $0.key < $1.key })
+                .map { "\($0.key)=\($0.value)" }.joined(separator: " "))
+        }
+        return parts.isEmpty ? nil : parts.joined(separator: "  ·  ")
     }
 }
 
