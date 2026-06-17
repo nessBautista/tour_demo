@@ -1,0 +1,40 @@
+# ─── macOS ───
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+
+# ─── Xcode — user-specific & generated ───
+## Per-developer state (window layout, breakpoints, last-open file) — never shared.
+xcuserdata/
+*.xcuserstate
+*.xcuserdatad
+
+## Schemes carry our env-var key wiring (Supabase / OpenRouter), so they stay local.
+## Keys arrive via Xcode scheme env — see exp-001 iOS architecture §6.
+**/xcshareddata/xcschemes/
+
+## Build products / indexes / derived data.
+build/
+DerivedData/
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM
+*.dSYM.zip
+*.xcuserstate
+timeline.xctimeline
+playground.xcworkspace
+
+# ─── Swift Package Manager ───
+.build/
+.swiftpm/
+Packages/
+
+# ─── Secrets / local config (only *.example.* is tracked) ───
+*.xcconfig.local
+Secrets.xcconfig
+SupabaseConfig.swift
+.env
+.env.*
+!.env.example
