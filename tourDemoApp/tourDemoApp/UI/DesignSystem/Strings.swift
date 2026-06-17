@@ -19,9 +19,10 @@ enum Strings {
     }
 
     enum Onboarding {
-        static let title = "Tell us what you want"
-        static let message = "Before your first tour, share what matters in a home. Voice capture lands here next."
-        static let cta = "Get started"
+        // The shared eyebrow + serif title for the dark focus screens. Screens
+        // compose `FocusHeader` (UI/Components) with these — no header wrapper.
+        static let eyebrow = "ONBOARDING · VOICE PREFERENCES"
+        static let title = "Tell me what you’re looking for."
     }
 
     enum Today {
