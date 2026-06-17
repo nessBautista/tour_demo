@@ -13,6 +13,7 @@
 
 import SwiftUI
 import UIKit
+import EventLog
 
 // MARK: - Public logging API (compiled in ALL configs; no-op in release)
 
@@ -57,6 +58,10 @@ final class DevTools {
     /// Demo control wired by the app root (e.g. RootView) — restarts onboarding.
     /// Optional so the panel only shows it once a host registers it.
     var onResetDemo: (() -> Void)?
+
+    /// The app's shared EventLog store, wired by the root, so the Events tab can
+    /// show the live event/inference stream.
+    var eventStore: InMemoryEventSink?
 
     private init() {}
 }

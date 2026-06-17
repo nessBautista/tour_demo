@@ -10,6 +10,7 @@
 
 import Foundation
 import Combine
+import EventLog
 
 struct TodayState {
     enum Phase: Equatable {
@@ -33,19 +34,24 @@ final class TodayViewModel: ObservableObject {
     @Published private(set) var state = TodayState()
 
     private let homesProvider: any HomesProviding
+    private let events: EventLogger
     private var isLoading = false
 
-    init(homesProvider: any HomesProviding) {
+    init(homesProvider: any HomesProviding,
+         eventLogger: EventLogger = EventLogger(sink: NoOpEventSink())) {
         self.homesProvider = homesProvider
+        self.events = eventLogger
     }
 
     func send(_ action: TodayAction) {
         switch action {
         case .appeared:
+            events.log("today.appeared")
             // Pull-based: load once; the tab re-appearing won't refetch existing data.
             if state.homes.isEmpty { load() }
 
         case .retryTapped:
+            events.log("today.retry")
             state.phase = .loading
             load()
 
@@ -55,9 +61,12 @@ final class TodayViewModel: ObservableObject {
             case .success(let homes):
                 state.homes = homes
                 state.phase = .loaded
+                events.log("today.homes_loaded", properties: ["count": String(homes.count)])
                 devLog("today: loaded \(homes.count) listings")
             case .failure(let error):
                 state.phase = .failed(error.localizedDescription)
+                events.log("today.homes_failed", category: .system,
+                           properties: ["error": error.localizedDescription])
                 devLog("today: load failed — \(error.localizedDescription)", level: .error)
             }
         }

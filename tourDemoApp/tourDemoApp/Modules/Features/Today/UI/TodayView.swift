@@ -9,12 +9,15 @@
 //
 
 import SwiftUI
+import EventLog
 
 struct TodayView: View {
     @StateObject private var viewModel: TodayViewModel
 
-    init(homesProvider: any HomesProviding) {
-        _viewModel = StateObject(wrappedValue: TodayViewModel(homesProvider: homesProvider))
+    init(homesProvider: any HomesProviding,
+         eventLogger: EventLogger = EventLogger(sink: NoOpEventSink())) {
+        _viewModel = StateObject(wrappedValue: TodayViewModel(
+            homesProvider: homesProvider, eventLogger: eventLogger))
     }
 
     var body: some View {

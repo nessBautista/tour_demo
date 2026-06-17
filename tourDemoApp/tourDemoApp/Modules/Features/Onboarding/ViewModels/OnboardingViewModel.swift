@@ -11,6 +11,7 @@
 
 import Foundation
 import Combine
+import EventLog
 
 @MainActor
 final class OnboardingViewModel: ObservableObject {
@@ -28,21 +29,31 @@ final class OnboardingViewModel: ObservableObject {
 
     private let engine: any OnboardingExtracting
     private let onComplete: () -> Void
+    private let events: EventLogger
+    /// Correlates every event of one onboarding run.
+    private let runID = UUID()
 
     init(onComplete: @escaping () -> Void,
-         engine: any OnboardingExtracting = FixtureOnboardingEngine()) {
+         engine: any OnboardingExtracting = FixtureOnboardingEngine(),
+         eventLogger: EventLogger = EventLogger(sink: NoOpEventSink())) {
         self.onComplete = onComplete
         self.engine = engine
+        self.events = eventLogger
     }
 
     var keptCount: Int { cards.filter(\.isOn).count }
 
     // MARK: Intents
 
-    func startTapped() { phase = .recording }
+    func startTapped() {
+        events.log("onboarding.started", traceID: runID)
+        phase = .recording
+    }
 
     /// The recording screen finished → run extraction on the captured transcript.
     func finishedRecording(transcript: String) {
+        events.log("onboarding.recording_finished",
+                   properties: ["chars": String(transcript.count)], traceID: runID)
         phase = .extracting
         devLog("onboarding: extracting from a \(transcript.count)-char transcript")
         Task { await runExtraction(transcript) }
@@ -51,21 +62,30 @@ final class OnboardingViewModel: ObservableObject {
     func toggle(_ id: ProfileCard.ID) {
         guard let index = cards.firstIndex(where: { $0.id == id }) else { return }
         cards[index].isOn.toggle()
+        events.log("onboarding.card_toggled",
+                   properties: ["kept": String(keptCount)], traceID: runID)
     }
 
     func saveTapped() {
         savedCount = keptCount
+        events.log("onboarding.saved",
+                   properties: ["count": String(savedCount)], traceID: runID)
         devLog("onboarding: profile saved · \(savedCount) preference(s) confirmed")
         phase = .complete
     }
 
-    func enterTapped() { onComplete() }
+    func enterTapped() {
+        events.log("onboarding.entered_app", traceID: runID)
+        onComplete()
+    }
 
     // MARK: Effect
 
     private func runExtraction(_ transcript: String) async {
         let draft = (try? await engine.extract(transcript: transcript)) ?? OnboardingDraft()
         cards = draft.preferences.map { ProfileCard(proposal: $0) }
+        events.log("onboarding.extracted",
+                   properties: ["count": String(cards.count)], traceID: runID)
         devLog("onboarding: extracted \(cards.count) preference(s)")
         phase = .profile
     }

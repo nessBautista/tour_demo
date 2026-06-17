@@ -9,12 +9,15 @@
 //
 
 import SwiftUI
+import EventLog
 
 struct OnboardingView: View {
     @StateObject private var viewModel: OnboardingViewModel
 
-    init(onComplete: @escaping () -> Void) {
-        _viewModel = StateObject(wrappedValue: OnboardingViewModel(onComplete: onComplete))
+    init(onComplete: @escaping () -> Void,
+         eventLogger: EventLogger = EventLogger(sink: NoOpEventSink())) {
+        _viewModel = StateObject(wrappedValue: OnboardingViewModel(
+            onComplete: onComplete, eventLogger: eventLogger))
     }
 
     var body: some View {

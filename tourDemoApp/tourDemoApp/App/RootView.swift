@@ -27,9 +27,10 @@ struct RootView: View {
         }
         .onAppear {
             #if DEBUG
-            // "Reset demo" lives in the shake-triggered Developer Tools, not in any
-            // navigation bar. Register the scope reset so the panel can fire it.
+            // The shake-triggered Developer Tools read the app's shared event store
+            // and fire the demo reset. Wire both from the container once.
             DevTools.shared.onResetDemo = { viewModel.send(.resetDemo) }
+            DevTools.shared.eventStore = container.eventStore
             #endif
         }
     }
