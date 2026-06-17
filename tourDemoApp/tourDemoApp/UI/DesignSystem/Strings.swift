@@ -25,9 +25,10 @@ enum Strings {
     }
 
     enum Today {
-        static let title = "Your homes"
-        static let message = "Listings and tour status will show here. Book a tour, then debrief after you visit."
-        static let openDebrief = "Open a debrief"
+        static let emptyTitle = "No listings yet"
+        static let emptyMessage = "Once homes are added to the backend, they'll show up here."
+        static let errorTitle = "Couldn't load listings"
+        static let retry = "Try again"
     }
 
     enum Debrief {
