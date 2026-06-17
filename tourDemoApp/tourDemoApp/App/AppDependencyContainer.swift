@@ -20,7 +20,8 @@ final class AppDependencyContainer {
     /// One event system the whole app emits into — built once, injected everywhere.
     /// `store` is where the in-app event/cost view reads from (§7).
     let logging: Logging
-    // let buyerMemoryStore: BuyerMemoryStore
+    /// The shared buyer profile (§6) — onboarding writes it, Today/Compare rank by it.
+    let buyerMemory: BuyerMemoryStore
     // let agentEngines: AgentEngines
 
     var eventLogger: EventLogger { logging.logger }
@@ -29,6 +30,7 @@ final class AppDependencyContainer {
     init() {
         self.homesProvider = HomesServiceFactory.make()
         self.logging = LoggingFactory.make()
+        self.buyerMemory = BuyerMemoryStore()
     }
 
     // MARK: Composition roots
@@ -46,11 +48,11 @@ final class AppDependencyContainer {
     // MARK: Feature factories
 
     func makeOnboardingView(onComplete: @escaping () -> Void) -> OnboardingView {
-        OnboardingView(onComplete: onComplete, eventLogger: eventLogger)
+        OnboardingView(onComplete: onComplete, eventLogger: eventLogger, buyerMemory: buyerMemory)
     }
 
     func makeTodayView() -> TodayView {
-        TodayView(homesProvider: homesProvider, eventLogger: eventLogger)
+        TodayView(homesProvider: homesProvider, eventLogger: eventLogger, buyerMemory: buyerMemory)
     }
 
     // Reached from Today once feat/per-home-debrief wires it up.

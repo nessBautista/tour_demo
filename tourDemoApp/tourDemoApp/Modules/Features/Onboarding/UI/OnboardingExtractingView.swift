@@ -13,9 +13,9 @@ import SwiftUI
 struct OnboardingExtractingView: View {
     private let calls = [
         "add_must_have( … )",
-        "add_nice_to_have( … )",
-        "set_priority( … )",
         "add_must_have( … )",
+        "add_nice_to_have( … )",
+        "add_nice_to_have( … )",
         "done()",
     ]
 

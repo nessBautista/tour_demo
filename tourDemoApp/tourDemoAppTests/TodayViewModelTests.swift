@@ -3,9 +3,8 @@
 //  tourDemoAppTests
 //
 //  The pattern's core testability claim (iOS architecture §8): a ViewModel is a
-//  plain object — send an Action, assert the State. The async effect is tested by
-//  sending the feedback action directly (no real I/O), plus one integration test
-//  that drives the fixture seam end to end.
+//  plain object — send an Action, assert the State. Today now ranks listings by
+//  fit against the buyer profile, so the reducer tests assert the ranking too.
 //
 
 import XCTest
@@ -16,14 +15,19 @@ final class TodayViewModelTests: XCTestCase {
 
     // MARK: Reducer (deterministic, no effect)
 
-    func testHomesLoadedSuccessPopulatesStateAndMarksLoaded() {
+    func testHomesLoadedRanksByFitBestFirst() {
+        // Default buyer profile (yard + quiet high, commute + kitchen medium) over
+        // the fixture ratings → Alder wins, fits descending.
         let vm = TodayViewModel(homesProvider: FixtureHomesService())
-        let homes = FixtureHomesService.demoHomes
 
-        vm.send(.homesLoaded(.success(homes)))
+        vm.send(.homesLoaded(.success(FixtureHomesService.demoHomes)))
 
-        XCTAssertEqual(vm.state.homes, homes)
         XCTAssertEqual(vm.state.phase, .loaded)
+        XCTAssertEqual(vm.state.scored.count, 3)
+        XCTAssertTrue(vm.state.scored.first?.home.address.hasPrefix("412 Alder") ?? false)
+        XCTAssertEqual(vm.state.scored.first?.fitPercent, 86)
+        let fits = vm.state.scored.map(\.fit)
+        XCTAssertEqual(fits, fits.sorted(by: >))
     }
 
     func testHomesLoadedFailureSurfacesErrorState() {
@@ -31,7 +35,7 @@ final class TodayViewModelTests: XCTestCase {
 
         vm.send(.homesLoaded(.failure(HomesError.invalidResponse)))
 
-        XCTAssertTrue(vm.state.homes.isEmpty)
+        XCTAssertTrue(vm.state.scored.isEmpty)
         guard case .failed(let message) = vm.state.phase else {
             return XCTFail("expected .failed, got \(vm.state.phase)")
         }
@@ -40,7 +44,7 @@ final class TodayViewModelTests: XCTestCase {
 
     // MARK: Effect (drives the injected provider seam)
 
-    func testAppearedLoadsHomesThroughTheProvider() async {
+    func testAppearedLoadsAndRanksThroughTheProvider() async {
         let fixture = FixtureHomesService()
         let vm = TodayViewModel(homesProvider: fixture)
 
@@ -51,6 +55,6 @@ final class TodayViewModelTests: XCTestCase {
         }
 
         XCTAssertEqual(vm.state.phase, .loaded)
-        XCTAssertEqual(vm.state.homes, fixture.homes)
+        XCTAssertEqual(vm.state.scored.count, fixture.homes.count)
     }
 }

@@ -30,15 +30,18 @@ final class OnboardingViewModel: ObservableObject {
     private let engine: any OnboardingExtracting
     private let onComplete: () -> Void
     private let events: EventLogger
+    private let buyerMemory: BuyerMemoryStore
     /// Correlates every event of one onboarding run.
     private let runID = UUID()
 
     init(onComplete: @escaping () -> Void,
          engine: any OnboardingExtracting = FixtureOnboardingEngine(),
-         eventLogger: EventLogger = EventLogger(sink: NoOpEventSink())) {
+         eventLogger: EventLogger = EventLogger(sink: NoOpEventSink()),
+         buyerMemory: BuyerMemoryStore = BuyerMemoryStore()) {
         self.onComplete = onComplete
         self.engine = engine
         self.events = eventLogger
+        self.buyerMemory = buyerMemory
     }
 
     var keptCount: Int { cards.filter(\.isOn).count }
@@ -67,10 +70,14 @@ final class OnboardingViewModel: ObservableObject {
     }
 
     func saveTapped() {
-        savedCount = keptCount
+        let kept = cards.filter(\.isOn).map(\.proposal)
+        // Commit the confirmed preferences to the shared profile — this is what
+        // Today (and later Compare) rank against.
+        buyerMemory.setPreferences(kept.map(\.preference))
+        savedCount = kept.count
         events.log("onboarding.saved",
                    properties: ["count": String(savedCount)], traceID: runID)
-        devLog("onboarding: profile saved · \(savedCount) preference(s) confirmed")
+        devLog("onboarding: profile saved · \(savedCount) preference(s) committed to memory")
         phase = .complete
     }
 

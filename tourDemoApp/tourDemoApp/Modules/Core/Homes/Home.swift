@@ -22,12 +22,16 @@ struct Home: Identifiable, Equatable, Sendable, Codable {
     let sqft: Int?
     let headline: String?
     let imageURL: URL?
+    /// 0–100 per scored dimension (yard/commute/quiet/kitchen/light/parking), from
+    /// the backend `ratings` jsonb. The scorer's input; string keys map to the
+    /// closed `HomeDimension` vocabulary when ranking.
+    let ratings: [String: Int]
 
     enum CodingKeys: String, CodingKey {
-        case id, address, price, beds, baths, sqft, headline
+        case id, address, price, beds, baths, sqft, headline, ratings
         case imageURL = "image_url"
     }
 
     /// The PostgREST `select` list — exactly the fields above.
-    static let selectedColumns = "id,address,price,beds,baths,sqft,headline,image_url"
+    static let selectedColumns = "id,address,price,beds,baths,sqft,headline,ratings,image_url"
 }

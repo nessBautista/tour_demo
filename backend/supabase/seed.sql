@@ -6,7 +6,7 @@
 -- (Supabase only auto-runs seed.sql on a local `supabase db reset`.)
 
 -- image_url is left null; attach photos after seeding with `tour-backend set-image`.
-insert into listings (id, address, price, beds, baths, sqft, headline, facts) values
+insert into listings (id, address, price, beds, baths, sqft, headline, facts, ratings) values
   (
     '00000000-0000-0000-0000-000000000001',
     '412 Alder Court, Maple Grove',
@@ -19,7 +19,8 @@ insert into listings (id, address, price, beds, baths, sqft, headline, facts) va
       "quiet": "quiet cul-de-sac",
       "kitchen": "updated 2022",
       "parking": "2-car garage"
-    }'::jsonb
+    }'::jsonb,
+    '{"yard":100,"commute":40,"quiet":100,"kitchen":90,"light":95,"parking":90}'::jsonb
   ),
   (
     '00000000-0000-0000-0000-000000000002',
@@ -33,7 +34,8 @@ insert into listings (id, address, price, beds, baths, sqft, headline, facts) va
       "quiet": "street-facing bedroom, some traffic hum",
       "kitchen": "open-plan, brand new appliances",
       "parking": "1 deeded garage spot"
-    }'::jsonb
+    }'::jsonb,
+    '{"yard":5,"commute":100,"quiet":20,"kitchen":90,"light":50,"parking":75}'::jsonb
   ),
   (
     '00000000-0000-0000-0000-000000000003',
@@ -47,5 +49,6 @@ insert into listings (id, address, price, beds, baths, sqft, headline, facts) va
       "quiet": "very quiet residential street",
       "kitchen": "original 1990s, renovation likely",
       "parking": "street parking only"
-    }'::jsonb
+    }'::jsonb,
+    '{"yard":50,"commute":65,"quiet":100,"kitchen":15,"light":30,"parking":25}'::jsonb
   );

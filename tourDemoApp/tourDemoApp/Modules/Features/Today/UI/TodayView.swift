@@ -15,9 +15,10 @@ struct TodayView: View {
     @StateObject private var viewModel: TodayViewModel
 
     init(homesProvider: any HomesProviding,
-         eventLogger: EventLogger = EventLogger(sink: NoOpEventSink())) {
+         eventLogger: EventLogger = EventLogger(sink: NoOpEventSink()),
+         buyerMemory: BuyerMemoryStore = BuyerMemoryStore()) {
         _viewModel = StateObject(wrappedValue: TodayViewModel(
-            homesProvider: homesProvider, eventLogger: eventLogger))
+            homesProvider: homesProvider, eventLogger: eventLogger, buyerMemory: buyerMemory))
     }
 
     var body: some View {
@@ -47,7 +48,7 @@ struct TodayView: View {
             )
 
         case .loaded:
-            if viewModel.state.homes.isEmpty {
+            if viewModel.state.scored.isEmpty {
                 PlaceholderScreen(
                     symbol: "house",
                     title: Strings.Today.emptyTitle,
@@ -62,8 +63,8 @@ struct TodayView: View {
     private var listings: some View {
         ScrollView {
             LazyVStack(spacing: Spacing.l) {
-                ForEach(viewModel.state.homes) { home in
-                    HomeListCard(home: home)
+                ForEach(viewModel.state.scored) { scored in
+                    HomeListCard(home: scored.home, fitPercent: scored.fitPercent)
                 }
             }
             .padding(.horizontal, Spacing.l)
