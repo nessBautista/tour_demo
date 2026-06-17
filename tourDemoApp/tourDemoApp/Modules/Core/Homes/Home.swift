@@ -13,7 +13,7 @@
 
 import Foundation
 
-struct Home: Identifiable, Equatable, Sendable, Codable {
+struct Home: Identifiable, Equatable, Hashable, Sendable, Codable {
     let id: UUID
     let address: String
     let price: Int

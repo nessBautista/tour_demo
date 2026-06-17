@@ -28,6 +28,10 @@ enum TodayAction {
     case appeared
     case retryTapped
     case homesLoaded(Result<[Home], Error>)
+    /// Dev affordance: flag a home toured so its debrief entry point appears.
+    case markToured(UUID)
+    /// A pushed debrief popped back — re-rank to reflect its profile/perception edits.
+    case debriefReturned
 }
 
 @MainActor
@@ -79,7 +83,26 @@ final class TodayViewModel: ObservableObject {
                            properties: ["error": error.localizedDescription])
                 devLog("today: load failed — \(error.localizedDescription)", level: .error)
             }
+
+        case .markToured(let id):
+            buyerMemory.markToured(id)
+            rerank()
+            events.log("today.marked_toured", properties: ["home": String(id.uuidString.prefix(8))])
+            devLog("today: marked \(id.uuidString.prefix(8)) toured")
+
+        case .debriefReturned:
+            // The debrief may have changed the profile and/or this home's perception.
+            rerank()
+            let ranking = rankingSummary()
+            events.log("today.reranked_after_debrief",
+                       properties: ["profile": buyerMemory.summary, "ranking": ranking])
+            devLog("today: re-ranked after debrief — profile [\(buyerMemory.summary)] → \(ranking)")
         }
+    }
+
+    /// Re-score the already-loaded homes against the current memory (no refetch).
+    private func rerank() {
+        state.scored = buyerMemory.ranked(state.scored.map(\.home))
     }
 
     // MARK: Effect

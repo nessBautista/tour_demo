@@ -34,12 +34,16 @@ final class OnboardingViewModel: ObservableObject {
     /// Correlates every event of one onboarding run.
     private let runID = UUID()
 
+    // `engine` defaults to nil and is built here in the @MainActor init body, not
+    // as a default argument: default-arg expressions evaluate in a NONISOLATED
+    // context, and FixtureOnboardingEngine is main-actor-isolated under
+    // SWIFT_DEFAULT_ACTOR_ISOLATION=MainActor. See [[swift-default-arg-isolation]].
     init(onComplete: @escaping () -> Void,
-         engine: any OnboardingExtracting = FixtureOnboardingEngine(),
+         engine: (any OnboardingExtracting)? = nil,
          eventLogger: EventLogger = EventLogger(sink: NoOpEventSink()),
          buyerMemory: BuyerMemoryStore = BuyerMemoryStore()) {
         self.onComplete = onComplete
-        self.engine = engine
+        self.engine = engine ?? FixtureOnboardingEngine()
         self.events = eventLogger
         self.buyerMemory = buyerMemory
     }

@@ -22,6 +22,8 @@ final class AppDependencyContainer {
     let logging: Logging
     /// The shared buyer profile (§6) — onboarding writes it, Today/Compare rank by it.
     let buyerMemory: BuyerMemoryStore
+    /// Which main tab is selected + the last-debriefed home (cross-tab navigation).
+    let router = AppRouter()
     // let agentEngines: AgentEngines
 
     var eventLogger: EventLogger { logging.logger }
@@ -42,7 +44,7 @@ final class AppDependencyContainer {
     }
 
     func makeMainTabView() -> MainTabView {
-        MainTabView(container: self)
+        MainTabView(container: self, router: router)
     }
 
     // MARK: Feature factories
@@ -52,16 +54,33 @@ final class AppDependencyContainer {
     }
 
     func makeTodayView() -> TodayView {
-        TodayView(homesProvider: homesProvider, eventLogger: eventLogger, buyerMemory: buyerMemory)
+        TodayView(
+            homesProvider: homesProvider,
+            eventLogger: eventLogger,
+            buyerMemory: buyerMemory,
+            debrief: { [self] home, onClose, onSeeCompare in
+                makeDebriefView(home: home, onClose: onClose, onSeeCompare: onSeeCompare)
+            },
+            goToCompare: { [router] id in router.goToCompare(focus: id) }
+        )
     }
 
-    // Reached from Today once feat/per-home-debrief wires it up.
-    func makeDebriefView() -> DebriefView {
-        DebriefView()
+    /// The per-home debrief flow, pushed onto Today's stack.
+    func makeDebriefView(home: Home,
+                         onClose: @escaping () -> Void = {},
+                         onSeeCompare: @escaping () -> Void = {}) -> DebriefView {
+        DebriefView(home: home,
+                    eventLogger: eventLogger,
+                    buyerMemory: buyerMemory,
+                    onClose: onClose,
+                    onSeeCompare: onSeeCompare)
     }
 
     func makeCompareView() -> CompareView {
-        CompareView()
+        CompareView(homesProvider: homesProvider,
+                    eventLogger: eventLogger,
+                    buyerMemory: buyerMemory,
+                    currentFocus: { [router] in router.focusHomeID })
     }
 
     func makePlanView() -> PlanView {
