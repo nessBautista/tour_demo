@@ -17,12 +17,13 @@ import VoiceExtraction
 
 enum OnboardingVoiceFactory {
     @MainActor
-    static func make(script: String) -> any VoiceTranscribing {
+    static func make(script: String,
+                     audioResource: String? = "onboarding_preferences") -> any VoiceTranscribing {
         #if os(iOS) && !targetEnvironment(simulator)
         if #available(iOS 26, *) {
             return SpeechTranscriptionService()
         }
         #endif
-        return FixtureAudioTranscriber(script: script)
+        return FixtureAudioTranscriber(script: script, audioResource: audioResource)
     }
 }

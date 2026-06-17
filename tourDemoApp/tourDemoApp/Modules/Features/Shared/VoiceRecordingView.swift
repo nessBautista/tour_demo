@@ -36,12 +36,18 @@ struct VoiceRecordingView: View {
     private let ticker = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     private let blinker = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
-    init(eyebrow: String, title: String, script: String, onFinish: @escaping (String) -> Void) {
+    /// The bundled fixture clip to play (Simulator/demo); `onboarding_preferences`
+    /// by default, a debrief clip when the debrief flow drives the recorder.
+    init(eyebrow: String,
+         title: String,
+         script: String,
+         audioResource: String? = "onboarding_preferences",
+         onFinish: @escaping (String) -> Void) {
         self.eyebrow = eyebrow
         self.title = title
         self.script = script
         self.onFinish = onFinish
-        _voice = State(initialValue: OnboardingVoiceFactory.make(script: script))
+        _voice = State(initialValue: OnboardingVoiceFactory.make(script: script, audioResource: audioResource))
     }
 
     var body: some View {

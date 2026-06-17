@@ -34,13 +34,29 @@ enum Strings {
 
     enum Debrief {
         static let navTitle = "Debrief"
-        static let title = "Record your impression"
-        static let message = "A 20–30s voice note after a tour becomes structured memory. Recording arrives with the debrief feature."
+        // Recording screen (reuses the dark focus header).
+        static let eyebrow = "DEBRIEF · VOICE IMPRESSION"
+        static let recordTitle = "How did it feel?"
+        // Confirmation screen.
+        static let confirmEyebrow = "EXTRACTED · THIS HOME"
+        static let confirmTitle = "Here’s what I heard."
+        static let confirmSubtitle = "Toggle off anything that’s not right — only what you keep touches memory."
+        static let profileChangesHeader = "CHANGES TO YOUR PROFILE"
+        static let footer = "nothing commits until you save"
+        // Complete screen.
+        static let savedTitle = "Saved to this home"
+        static let seeCompare = "See how Compare re-ranked"
+        static let done = "Done"
+        // Per-card entry on Today.
+        static let record = "Record briefing"
+        static let markToured = "Dev · mark toured"
     }
 
     enum Compare {
         static let title = "Nothing to compare yet"
-        static let message = "Toured homes will rank here by how well they fit your preferences — explained, not just listed."
+        static let message = "Toured homes rank here by how well they fit your preferences — explained, not just listed. Tour a home and record a debrief to populate it."
+        static let whyHeader = "WHY THIS ORDER"
+        static let updated = "Updated from your debrief"
     }
 
     enum Plan {

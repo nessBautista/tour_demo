@@ -65,6 +65,10 @@ struct HomeListCard: View {
         .frame(maxWidth: .infinity)
         .frame(height: 160)
         .clipped()
+        // `scaledToFill` overflows the 160 frame; without this its *hit* region
+        // overflows too and steals taps from the row below (the debrief/dev button
+        // under the top card). Pin hit-testing to the visible 160-tall frame.
+        .contentShape(Rectangle())
     }
 
     private var placeholderIcon: some View {
