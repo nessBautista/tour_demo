@@ -5,22 +5,25 @@
 //  It is the one place that builds screens, so navigation stays decoupled from
 //  construction: feature views receive factory *closures*, never the container.
 //
-//  Phase-1 shell: no live dependencies yet. DataClient, EventLogging,
-//  BuyerMemoryStore and the agent engines are added as later PRs land — they
-//  become `let` properties here and get injected into the ViewModels.
+//  Long-lived dependencies are assembled here once at launch and injected into
+//  ViewModels as protocols. EventLogging, BuyerMemoryStore and the agent engines
+//  arrive in later PRs.
 //
 
 import SwiftUI
 
 @MainActor
 final class AppDependencyContainer {
-    // MARK: Long-lived dependencies (added in later PRs)
-    // let dataClient: DataClient
+    // MARK: Long-lived dependencies
+    /// Listings source — live Supabase when keys are set, fixtures otherwise (§6).
+    let homesProvider: any HomesProviding
     // let eventLogger: EventLogging
     // let buyerMemoryStore: BuyerMemoryStore
     // let agentEngines: AgentEngines
 
-    init() {}
+    init() {
+        self.homesProvider = HomesServiceFactory.make()
+    }
 
     // MARK: Composition roots
     // RootView / MainTabView are the app's own scaffolding, so they may take the
@@ -41,11 +44,10 @@ final class AppDependencyContainer {
     }
 
     func makeTodayView() -> TodayView {
-        // Navigation decoupling: Today knows how to *present* a debrief without
-        // knowing how one is built.
-        TodayView(makeDebriefView: { self.makeDebriefView() })
+        TodayView(homesProvider: homesProvider)
     }
 
+    // Reached from Today once feat/per-home-debrief wires it up.
     func makeDebriefView() -> DebriefView {
         DebriefView()
     }
