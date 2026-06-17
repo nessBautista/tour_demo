@@ -13,9 +13,25 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-# Free-form, demo-only attributes (e.g. {"yard": "large, fenced"}). The comparison
-# system (a later PR) reads structured ratings; here facts are just descriptive.
+# Free-form, demo-only attributes (e.g. {"yard": "large, fenced"}). Descriptive
+# prose for humans; the comparison system reads the structured `Ratings` below.
 Facts = dict[str, str]
+
+
+class Ratings(BaseModel):
+    """0–100 rating per scored dimension — the home side of the fit score.
+
+    The closed comparison vocabulary, minus two: `budget` is derived from `price`
+    app-side, and `note` is unscored — so neither is stored here. Higher always
+    means "more of the trait" (more yard, shorter commute, quieter, …).
+    """
+
+    yard: int = Field(default=0, ge=0, le=100)
+    commute: int = Field(default=0, ge=0, le=100)
+    quiet: int = Field(default=0, ge=0, le=100)
+    kitchen: int = Field(default=0, ge=0, le=100)
+    light: int = Field(default=0, ge=0, le=100)
+    parking: int = Field(default=0, ge=0, le=100)
 
 
 class NewListing(BaseModel):
@@ -28,6 +44,7 @@ class NewListing(BaseModel):
     sqft: int | None = Field(default=None, gt=0)
     headline: str | None = None
     facts: Facts = Field(default_factory=dict)
+    ratings: Ratings = Field(default_factory=Ratings, description="0–100 per scored dimension; the scorer's input.")
     image_url: str | None = Field(default=None, description="Public URL of the listing photo (Supabase Storage).")
 
 

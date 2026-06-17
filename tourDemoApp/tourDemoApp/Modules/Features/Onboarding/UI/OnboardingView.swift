@@ -15,9 +15,10 @@ struct OnboardingView: View {
     @StateObject private var viewModel: OnboardingViewModel
 
     init(onComplete: @escaping () -> Void,
-         eventLogger: EventLogger = EventLogger(sink: NoOpEventSink())) {
+         eventLogger: EventLogger = EventLogger(sink: NoOpEventSink()),
+         buyerMemory: BuyerMemoryStore = BuyerMemoryStore()) {
         _viewModel = StateObject(wrappedValue: OnboardingViewModel(
-            onComplete: onComplete, eventLogger: eventLogger))
+            onComplete: onComplete, eventLogger: eventLogger, buyerMemory: buyerMemory))
     }
 
     var body: some View {

@@ -20,7 +20,8 @@ struct TodayState {
     }
 
     var phase: Phase = .loading
-    var homes: [Home] = []
+    /// Listings ranked by fit against the buyer profile, best first.
+    var scored: [ScoredHome] = []
 }
 
 enum TodayAction {
@@ -35,12 +36,15 @@ final class TodayViewModel: ObservableObject {
 
     private let homesProvider: any HomesProviding
     private let events: EventLogger
+    private let buyerMemory: BuyerMemoryStore
     private var isLoading = false
 
     init(homesProvider: any HomesProviding,
-         eventLogger: EventLogger = EventLogger(sink: NoOpEventSink())) {
+         eventLogger: EventLogger = EventLogger(sink: NoOpEventSink()),
+         buyerMemory: BuyerMemoryStore = BuyerMemoryStore()) {
         self.homesProvider = homesProvider
         self.events = eventLogger
+        self.buyerMemory = buyerMemory
     }
 
     func send(_ action: TodayAction) {
@@ -48,7 +52,7 @@ final class TodayViewModel: ObservableObject {
         case .appeared:
             events.log("today.appeared")
             // Pull-based: load once; the tab re-appearing won't refetch existing data.
-            if state.homes.isEmpty { load() }
+            if state.scored.isEmpty { load() }
 
         case .retryTapped:
             events.log("today.retry")
@@ -59,10 +63,16 @@ final class TodayViewModel: ObservableObject {
             isLoading = false
             switch result {
             case .success(let homes):
-                state.homes = homes
+                // Rank against the current buyer profile (deterministic FitScorer).
+                state.scored = buyerMemory.ranked(homes)
                 state.phase = .loaded
-                events.log("today.homes_loaded", properties: ["count": String(homes.count)])
-                devLog("today: loaded \(homes.count) listings")
+                let ranking = rankingSummary()
+                let profile = buyerMemory.summary
+                events.log("today.homes_loaded",
+                           properties: ["count": String(homes.count),
+                                        "profile": profile,
+                                        "ranking": ranking])
+                devLog("today: profile [\(profile)] → ranked \(homes.count) by fit — \(ranking)")
             case .failure(let error):
                 state.phase = .failed(error.localizedDescription)
                 events.log("today.homes_failed", category: .system,
@@ -73,6 +83,17 @@ final class TodayViewModel: ObservableObject {
     }
 
     // MARK: Effect
+
+    /// Compact "Name fit%" list in ranked order, e.g.
+    /// "412 Alder Court 86%, 1735 Bellview Avenue 61%, …" — for the console / event log.
+    private func rankingSummary() -> String {
+        state.scored.map { scored in
+            let name = scored.home.address.split(separator: ",").first
+                .map(String.init)?.trimmingCharacters(in: .whitespaces) ?? scored.home.address
+            return "\(name) \(scored.fitPercent)%"
+        }
+        .joined(separator: ", ")
+    }
 
     private func load() {
         guard !isLoading else { return }

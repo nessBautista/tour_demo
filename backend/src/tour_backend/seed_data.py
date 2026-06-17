@@ -11,7 +11,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from uuid import UUID
 
-from .models import Listing
+from .models import Listing, Ratings
 
 _SEEDED_AT = datetime(2026, 6, 9, tzinfo=timezone.utc)
 
@@ -33,6 +33,7 @@ SEED_LISTINGS: list[Listing] = [
             "kitchen": "updated 2022",
             "parking": "2-car garage",
         },
+        ratings=Ratings(yard=100, commute=40, quiet=100, kitchen=90, light=95, parking=90),
     ),
     Listing(
         id=UUID("00000000-0000-0000-0000-000000000002"),
@@ -51,6 +52,7 @@ SEED_LISTINGS: list[Listing] = [
             "kitchen": "open-plan, brand new appliances",
             "parking": "1 deeded garage spot",
         },
+        ratings=Ratings(yard=5, commute=100, quiet=20, kitchen=90, light=50, parking=75),
     ),
     Listing(
         id=UUID("00000000-0000-0000-0000-000000000003"),
@@ -69,5 +71,6 @@ SEED_LISTINGS: list[Listing] = [
             "kitchen": "original 1990s, renovation likely",
             "parking": "street parking only",
         },
+        ratings=Ratings(yard=50, commute=65, quiet=100, kitchen=15, light=30, parking=25),
     ),
 ]
