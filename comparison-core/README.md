@@ -29,6 +29,7 @@ the importance-weighted average of those matches.
 ## Design
 
 ```
+HomeRankingFactory.makeDefault(preferences:) → any HomeRanking   ← single construction point
 HomeRanking (protocol)          ← depend on this; inject/swap implementations
    └─ FitScorer (struct)         init(preferences:) → score(_:) · rank(_:)
         ├─ Home         id, address, ratings: [HomeDimension: Int]
@@ -36,6 +37,7 @@ HomeRanking (protocol)          ← depend on this; inject/swap implementations
         └─ FitScore     home · fit · breakdown: [DimensionMatch]   ← explains the number
 ```
 
+- **`HomeRankingFactory`** — the construction seam. `makeDefault(preferences:)` returns `any HomeRanking` (today a `FitScorer`); `makeDemo()` wires the built-in sample profile. There's one strategy now, so it doesn't *select* like a platform factory — it's the single build point so a smarter or stubbed ranker can drop in later without touching callers.
 - **`HomeRanking`** — the protocol the rest of the system depends on (`score`, `rank`). Callers hold an `any HomeRanking`, so the concrete engine can be swapped or stubbed. `rank` has a default implementation, so a conformer only needs `score`.
 - **`FitScorer`** — the deterministic implementation, a `struct` (value semantics, `Sendable`, no shared state). Instantiated with a buyer's profile, then reused to `score(_:)` one home or `rank(_:)` many (best first; ties break by id). Immutable; `updating(preferences:)` makes a fresh one when the profile changes. `match(rating:direction:)` is a static helper.
 - **`HomeDimension`** — the closed vocabulary (`yard commute quiet kitchen light parking budget note`). A fixed enum is what keeps the comparison deterministic and explainable.
