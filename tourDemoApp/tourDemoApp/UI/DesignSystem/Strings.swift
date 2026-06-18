@@ -57,6 +57,20 @@ enum Strings {
         static let message = "Toured homes rank here by how well they fit your preferences — explained, not just listed. Tour a home and record a debrief to populate it."
         static let whyHeader = "WHY THIS ORDER"
         static let updated = "Updated from your debrief"
+        static let openMemory = "Memory"
+    }
+
+    enum Memory {
+        static let navTitle = "Memory"
+        static let title = "What I remember"
+        static let subtitle = "Everything below comes from what you said — and nothing changed your profile without you confirming it."
+        static let profileHeader = "YOUR PROFILE"
+        static let promoteHeader = "WORTH PROMOTING"
+        static let contradictionsHeader = "CHANGED YOUR MIND"
+        static let impressionsHeader = "IMPRESSIONS"
+        static let promote = "Promote"
+        static let dismiss = "Dismiss"
+        static let emptyImpressions = "Tour and debrief a few homes — what you say builds up here."
     }
 
     enum Plan {

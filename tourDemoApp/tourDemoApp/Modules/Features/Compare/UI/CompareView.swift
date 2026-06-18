@@ -16,14 +16,20 @@ import ComparisonCore
 struct CompareView: View {
     @StateObject private var viewModel: CompareViewModel
     private let currentFocus: () -> UUID?
+    /// Builds the buyer-memory panel pushed from the toolbar.
+    private let memory: () -> BuyerMemoryView
+
+    @State private var showMemory = false
 
     init(homesProvider: any HomesProviding,
          eventLogger: EventLogger = EventLogger(sink: NoOpEventSink()),
          buyerMemory: BuyerMemoryStore = BuyerMemoryStore(),
-         currentFocus: @escaping () -> UUID? = { nil }) {
+         currentFocus: @escaping () -> UUID? = { nil },
+         memory: @escaping () -> BuyerMemoryView = { BuyerMemoryView() }) {
         _viewModel = StateObject(wrappedValue: CompareViewModel(
             homesProvider: homesProvider, eventLogger: eventLogger, buyerMemory: buyerMemory))
         self.currentFocus = currentFocus
+        self.memory = memory
     }
 
     var body: some View {
@@ -31,6 +37,14 @@ struct CompareView: View {
             content
                 .navigationTitle(Strings.Tabs.compare)
                 .background(AppColor.appBackground)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button { showMemory = true } label: {
+                            Label(Strings.Compare.openMemory, systemImage: "brain")
+                        }
+                    }
+                }
+                .navigationDestination(isPresented: $showMemory) { memory() }
                 .onAppear { viewModel.send(.appeared(focus: currentFocus())) }
         }
     }
