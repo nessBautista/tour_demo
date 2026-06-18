@@ -80,7 +80,13 @@ final class AppDependencyContainer {
         CompareView(homesProvider: homesProvider,
                     eventLogger: eventLogger,
                     buyerMemory: buyerMemory,
-                    currentFocus: { [router] in router.focusHomeID })
+                    currentFocus: { [router] in router.focusHomeID },
+                    memory: { [self] in makeBuyerMemoryView() })
+    }
+
+    /// The buyer-memory panel, pushed from Compare.
+    func makeBuyerMemoryView() -> BuyerMemoryView {
+        BuyerMemoryView(buyerMemory: buyerMemory, eventLogger: eventLogger)
     }
 
     func makePlanView() -> PlanView {
