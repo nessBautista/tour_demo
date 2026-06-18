@@ -92,7 +92,8 @@ final class BuyerMemoryStore {
                        address: home.address,
                        summary: draft.summary ?? "",
                        positives: draft.positives,
-                       concerns: draft.concerns)
+                       concerns: draft.concerns,
+                       openQuestions: draft.openQuestions)
         )
         markToured(home.id)
     }

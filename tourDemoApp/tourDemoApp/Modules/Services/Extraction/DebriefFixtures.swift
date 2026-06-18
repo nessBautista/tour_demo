@@ -63,6 +63,7 @@ enum DebriefFixtures {
         draft: DebriefDraft(
             positives: ["Floods with light", "The kitchen is sharp"],
             concerns: ["Traffic noise off the street"],
+            openQuestions: ["Can the street-side windows be soundproofed?"],
             perceptions: [
                 HomePerception(dimension: .light,   polarity: .better,
                                reason: "Huge windows — it's full of light"),
@@ -85,6 +86,7 @@ enum DebriefFixtures {
         draft: DebriefDraft(
             positives: ["So much character", "A quiet block"],
             concerns: ["The rooms feel dark", "The kitchen needs a full gut"],
+            openQuestions: ["What would a full kitchen reno cost here?"],
             perceptions: [
                 HomePerception(dimension: .light,   polarity: .worse,
                                reason: "Even mid-afternoon the rooms feel dim"),

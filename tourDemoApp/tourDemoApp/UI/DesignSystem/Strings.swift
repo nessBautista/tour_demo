@@ -74,7 +74,11 @@ enum Strings {
     }
 
     enum Plan {
-        static let title = "No next step yet"
-        static let message = "Once you've toured and debriefed, your best next action shows up here."
+        static let heading = "Your next move"
+        static let subtitle = "One or two steps, grounded in what you’ve told me — and the funnel they feed, live."
+        static let actionsHeader = "NEXT BEST ACTION"
+        static let activityHeader = "YOUR ACTIVITY"
+        static let activityEmpty = "Tour a home and record a debrief — your journey shows up here."
+        static let northStar = "a confident next step"
     }
 }
