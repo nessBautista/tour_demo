@@ -10,6 +10,7 @@
 		CCAA33333333333333333333 /* VoiceExtraction in Frameworks */ = {isa = PBXBuildFile; productRef = CCAA22222222222222222222 /* VoiceExtraction */; };
 		CCAA66666666666666666666 /* EventLog in Frameworks */ = {isa = PBXBuildFile; productRef = CCAA55555555555555555555 /* EventLog */; };
 		CCAA99999999999999999999 /* ComparisonCore in Frameworks */ = {isa = PBXBuildFile; productRef = CCAA88888888888888888888 /* ComparisonCore */; };
+		CCAB33333333333333333333 /* AgentKit in Frameworks */ = {isa = PBXBuildFile; productRef = CCAB22222222222222222222 /* AgentKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 				CCAA33333333333333333333 /* VoiceExtraction in Frameworks */,
 				CCAA66666666666666666666 /* EventLog in Frameworks */,
 				CCAA99999999999999999999 /* ComparisonCore in Frameworks */,
+				CCAB33333333333333333333 /* AgentKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -124,6 +126,7 @@
 				CCAA22222222222222222222 /* VoiceExtraction */,
 				CCAA55555555555555555555 /* EventLog */,
 				CCAA88888888888888888888 /* ComparisonCore */,
+				CCAB22222222222222222222 /* AgentKit */,
 			);
 			productName = tourDemoApp;
 			productReference = CC33183F2FE31F850094F68A /* tourDemoApp.app */;
@@ -211,6 +214,7 @@
 				CCAA11111111111111111111 /* XCLocalSwiftPackageReference "../voice-extraction" */,
 				CCAA44444444444444444444 /* XCLocalSwiftPackageReference "../event-log" */,
 				CCAA77777777777777777777 /* XCLocalSwiftPackageReference "../comparison-core" */,
+				CCAB11111111111111111111 /* XCLocalSwiftPackageReference "../agent-kit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = CC3318402FE31F850094F68A /* Products */;
@@ -650,6 +654,10 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../comparison-core";
 		};
+		CCAB11111111111111111111 /* XCLocalSwiftPackageReference "../agent-kit" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = "../agent-kit";
+		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -667,6 +675,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = CCAA77777777777777777777 /* XCLocalSwiftPackageReference "../comparison-core" */;
 			productName = ComparisonCore;
+		};
+		CCAB22222222222222222222 /* AgentKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CCAB11111111111111111111 /* XCLocalSwiftPackageReference "../agent-kit" */;
+			productName = AgentKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -12,6 +12,9 @@
 //  Arguments → Environment Variables):
 //    SUPABASE_URL       = https://<project-ref>.supabase.co   (bare, no /rest/v1)
 //    SUPABASE_ANON_KEY  = <the anon public JWT — eyJ…, never the service_role key>
+//    OPENROUTER_API_KEY = <sk-or-… — enables the live extraction agent; absent → fixtures>
+//    OPENROUTER_MODEL   = <optional model slug; default anthropic/claude-opus-4.8. Note
+//                          OpenRouter uses DOTTED versions, e.g. anthropic/claude-haiku-4.5>
 //
 //  Deliberately pure and injectable: pass an explicit dictionary in tests; the
 //  default initializer reads ProcessInfo.
@@ -21,10 +24,14 @@ import Foundation
 
 struct AppEnvironment {
 
-    /// The keys the app reads to run against live services.
+    /// The keys the app reads to run against live services. Each is independent —
+    /// Supabase keys gate live listings, OPENROUTER_API_KEY gates the live agent;
+    /// any one absent just falls back to fixtures for that piece.
     enum Key: String, CaseIterable {
-        case supabaseURL     = "SUPABASE_URL"
-        case supabaseAnonKey = "SUPABASE_ANON_KEY"
+        case supabaseURL      = "SUPABASE_URL"
+        case supabaseAnonKey  = "SUPABASE_ANON_KEY"
+        case openRouterAPIKey = "OPENROUTER_API_KEY"
+        case openRouterModel  = "OPENROUTER_MODEL"
     }
 
     private let values: [String: String]

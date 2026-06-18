@@ -38,7 +38,7 @@ struct DebriefView: View {
                     eyebrow: Strings.Debrief.eyebrow,
                     title: Strings.Debrief.recordTitle,
                     script: viewModel.script,
-                    audioResource: "debrief_impression",
+                    audioResource: viewModel.audioResource,
                     onFinish: { viewModel.finishedRecording(transcript: $0) }
                 )
                 .transition(.opacity)
