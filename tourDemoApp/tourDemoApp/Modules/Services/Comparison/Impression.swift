@@ -20,18 +20,23 @@ struct Impression: Identifiable, Equatable, Sendable {
     let summary: String
     let positives: [String]
     let concerns: [String]
+    /// Follow-ups the debrief surfaced (e.g. "how old is the roof?") — the Plan tab
+    /// turns these into "ask your agent" next-best-actions.
+    let openQuestions: [String]
 
     init(homeID: UUID,
          address: String,
          summary: String,
          positives: [String],
          concerns: [String],
+         openQuestions: [String] = [],
          recordedAt: Date = Date()) {
         self.homeID = homeID
         self.address = address
         self.summary = summary
         self.positives = positives
         self.concerns = concerns
+        self.openQuestions = openQuestions
         self.recordedAt = recordedAt
     }
 }

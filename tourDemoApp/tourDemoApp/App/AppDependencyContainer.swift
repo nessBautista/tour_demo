@@ -90,6 +90,9 @@ final class AppDependencyContainer {
     }
 
     func makePlanView() -> PlanView {
-        PlanView()
+        PlanView(homesProvider: homesProvider,
+                 eventLogger: eventLogger,
+                 buyerMemory: buyerMemory,
+                 eventStore: eventStore)
     }
 }
