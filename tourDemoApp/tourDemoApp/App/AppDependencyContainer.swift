@@ -11,6 +11,7 @@
 
 import SwiftUI
 import EventLog
+import AgentKit
 
 @MainActor
 final class AppDependencyContainer {
@@ -24,15 +25,46 @@ final class AppDependencyContainer {
     let buyerMemory: BuyerMemoryStore
     /// Which main tab is selected + the last-debriefed home (cross-tab navigation).
     let router = AppRouter()
-    // let agentEngines: AgentEngines
+    /// The on-device extraction agent's LLM boundary — a live OpenRouter reasoner
+    /// when OPENROUTER_API_KEY is set, else nil (extraction falls back to fixtures).
+    /// The extraction engines (PR `agent/react-loop`) inject this behind the
+    /// existing OnboardingExtracting / DebriefExtracting seams.
+    let reasoner: (any Reasoner)?
 
     var eventLogger: EventLogger { logging.logger }
     var eventStore: InMemoryEventSink { logging.store }
+    /// True when a live agent is available (key configured).
+    var hasLiveAgent: Bool { reasoner != nil }
 
     init() {
+        let logging = LoggingFactory.make()
         self.homesProvider = HomesServiceFactory.make()
-        self.logging = LoggingFactory.make()
+        self.logging = logging
         self.buyerMemory = BuyerMemoryStore()
+        // Bridge each model call's token/latency telemetry into the event log, so
+        // the DevTools inference rollup shows real agent cost.
+        let inferenceLogger = logging.logger
+        self.reasoner = ReasonerFactory.make(onStats: { stats in
+            devLog("agent: \(stats.summary)")
+            inferenceLogger.inference(
+                model: stats.model,
+                operation: "extraction",
+                inputTokens: stats.promptTokens ?? 0,
+                outputTokens: stats.completionTokens ?? 0,
+                latencyMS: stats.latencyMS,
+                succeeded: stats.finishReason != "error",
+                properties: ["finish": stats.finishReason ?? "n/a",
+                             "tools": String(stats.toolCallCount)])
+        })
+    }
+
+    /// The live extraction engines when a reasoner is configured, else nil → the
+    /// feature ViewModels fall back to their fixture engines (keyless demo).
+    private var onboardingEngine: (any OnboardingExtracting)? {
+        reasoner.map { AgentOnboardingEngine(reasoner: $0, eventLogger: eventLogger) }
+    }
+    private var debriefEngine: (any DebriefExtracting)? {
+        reasoner.map { AgentDebriefEngine(reasoner: $0, eventLogger: eventLogger) }
     }
 
     // MARK: Composition roots
@@ -50,7 +82,8 @@ final class AppDependencyContainer {
     // MARK: Feature factories
 
     func makeOnboardingView(onComplete: @escaping () -> Void) -> OnboardingView {
-        OnboardingView(onComplete: onComplete, eventLogger: eventLogger, buyerMemory: buyerMemory)
+        OnboardingView(onComplete: onComplete, engine: onboardingEngine,
+                       eventLogger: eventLogger, buyerMemory: buyerMemory)
     }
 
     func makeTodayView() -> TodayView {
@@ -70,6 +103,7 @@ final class AppDependencyContainer {
                          onClose: @escaping () -> Void = {},
                          onSeeCompare: @escaping () -> Void = {}) -> DebriefView {
         DebriefView(home: home,
+                    engine: debriefEngine,
                     eventLogger: eventLogger,
                     buyerMemory: buyerMemory,
                     onClose: onClose,

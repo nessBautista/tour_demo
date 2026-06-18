@@ -26,10 +26,14 @@ enum DevLogLevel: String, CaseIterable {
 func devLog(_ message: @autoclosure () -> String, level: DevLogLevel = .info) {
     #if DEBUG
     let text = message()
-    DevLog.shared.log(text, level: level)
-    // Also emit to the Xcode console so a full session trace can be copy-pasted.
-    // Greppable prefix `TD|` and the level; e.g. `TD|warn| memory: ⚠ contradiction …`.
+    // Console first, synchronously — thread-safe and ordered, so a full session
+    // trace can be copy-pasted. Greppable prefix `TD|` + level, e.g.
+    // `TD|warn| memory: ⚠ contradiction …`.
     print("TD|\(level.rawValue)| \(text)")
+    // The in-app Logs panel is @Observable UI state; devLog is also called from
+    // background contexts (the agent loop runs off the main thread), so update it
+    // on the main actor to keep it race-free.
+    Task { @MainActor in DevLog.shared.log(text, level: level) }
     #endif
 }
 

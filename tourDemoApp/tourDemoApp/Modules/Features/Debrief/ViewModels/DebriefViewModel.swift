@@ -64,6 +64,9 @@ final class DebriefViewModel: ObservableObject {
     /// fallback if live capture is empty).
     var script: String { DebriefFixtures.fixture(for: home).transcript }
 
+    /// The bundled audio clip to play for this home (per-house; Simulator/device).
+    var audioResource: String { DebriefFixtures.fixture(for: home).audioResource }
+
     var keptCount: Int { cards.filter(\.isOn).count }
 
     // MARK: Intents
