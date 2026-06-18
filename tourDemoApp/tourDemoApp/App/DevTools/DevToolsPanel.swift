@@ -107,7 +107,7 @@ private struct DevActionsView: View {
                         .foregroundStyle(.secondary)
                 }
 
-                Text("Tour-state toggles (notToured → booked → debriefed) land here once feat/tour-state exists.")
+                Text("Tour state (notToured → booked → debriefed) advances from the Today cards: Book a tour, then Record briefing.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

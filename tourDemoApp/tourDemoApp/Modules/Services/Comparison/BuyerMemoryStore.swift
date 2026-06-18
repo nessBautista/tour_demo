@@ -30,11 +30,15 @@ struct ScoredHome: Identifiable, Equatable {
     let fit: Double
     /// The per-preference matches that produced `fit`, in profile order.
     let breakdown: [DimensionMatch]
-    /// Whether the buyer has toured this home (gates the debrief entry point).
-    let isToured: Bool
+    /// Where the home sits in the tour funnel (drives the Today affordance).
+    let tourState: TourState
+    /// How many debriefs are on record for it (shown on a debriefed card).
+    let impressionCount: Int
 
     var id: UUID { home.id }
     var fitPercent: Int { Int(fit.rounded()) }
+    /// Booked or debriefed — eligible for Compare.
+    var isToured: Bool { tourState.isToured }
 }
 
 @MainActor
@@ -68,7 +72,17 @@ final class BuyerMemoryStore {
 
     func tourState(of id: UUID) -> TourState { tourStates[id] ?? .notToured }
 
-    func markToured(_ id: UUID) { tourStates[id] = .toured }
+    /// Book a tour: advance notToured → booked. Never regresses a debriefed home.
+    func book(_ id: UUID) {
+        if tourState(of: id).rank < TourState.booked.rank {
+            tourStates[id] = .booked
+        }
+    }
+
+    /// Force a state (DevTools seeding / tests).
+    func setTourState(_ state: TourState, for id: UUID) {
+        tourStates[id] = state
+    }
 
     // MARK: Impressions
 
@@ -95,7 +109,8 @@ final class BuyerMemoryStore {
                        concerns: draft.concerns,
                        openQuestions: draft.openQuestions)
         )
-        markToured(home.id)
+        // A debriefed home is, by definition, toured.
+        tourStates[home.id] = .debriefed
     }
 
     /// Latest-wins merge by dimension: a revised preference replaces the prior one
@@ -155,7 +170,8 @@ final class BuyerMemoryStore {
                 return ScoredHome(home: home,
                                   fit: score.fit,
                                   breakdown: score.breakdown,
-                                  isToured: tourState(of: home.id).isToured)
+                                  tourState: tourState(of: home.id),
+                                  impressionCount: impressions(for: home.id).count)
             }
             .sorted { $0.fit > $1.fit }
     }

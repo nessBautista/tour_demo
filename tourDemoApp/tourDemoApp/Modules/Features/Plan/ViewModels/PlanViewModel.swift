@@ -218,8 +218,8 @@ final class PlanViewModel: ObservableObject {
         switch event.name {
         case "onboarding.saved":
             return row("Set up your buyer profile", p["count"].map { "\($0) preferences" })
-        case "today.marked_toured":
-            return row("Toured a home")
+        case "today.tour_booked":
+            return row("Booked a tour", shortNameOrNil(p["home"]))
         case "debrief.saved":
             return row("Debriefed a home", shortNameOrNil(p["home"]))
         case "memory.promoted":

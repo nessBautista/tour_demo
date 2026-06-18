@@ -47,9 +47,17 @@ enum Strings {
         static let savedTitle = "Saved to this home"
         static let seeCompare = "See how Compare re-ranked"
         static let done = "Done"
-        // Per-card entry on Today.
-        static let record = "Record briefing"
-        static let markToured = "Dev · mark toured"
+    }
+
+    enum Tour {
+        // Status pill on the Today card.
+        static let notToured = "NOT TOURED"
+        static let booked = "TOUR BOOKED"
+        static let debriefed = "DEBRIEFED"
+        // The one affordance per funnel stage.
+        static let bookTour = "Book a tour"
+        static let recordBriefing = "Record briefing"
+        static let recordAnother = "Record another impression"
     }
 
     enum Compare {
