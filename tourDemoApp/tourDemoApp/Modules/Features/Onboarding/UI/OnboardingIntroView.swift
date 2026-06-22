@@ -45,8 +45,6 @@ struct OnboardingIntroView: View {
                         .foregroundStyle(AppColor.textSecondary)
                 }
                 .frame(maxWidth: .infinity)
-
-                Spacer(minLength: Spacing.xl)
             }
             .padding(.horizontal, Spacing.xl)
             .padding(.top, Spacing.xl)

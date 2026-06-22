@@ -46,7 +46,7 @@ struct HomeListCard: View {
         ZStack {
             AppColor.surfaceSunken
             if let url = home.imageURL {
-                AsyncImage(url: url) { phase in
+                CachedAsyncImage(url: url) { phase in
                     switch phase {
                     case .success(let image):
                         image.resizable().scaledToFill()

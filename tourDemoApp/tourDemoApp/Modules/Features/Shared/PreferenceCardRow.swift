@@ -16,17 +16,20 @@ struct PreferenceCardRow: View {
     var onToggle: () -> Void
 
     var body: some View {
-        HStack(spacing: 12) {
-            badge
-            VStack(alignment: .leading, spacing: 3) {
-                Text(proposal.title)
-                    .font(Typography.bodyLarge.weight(.semibold))
-                    .foregroundStyle(AppColor.textPrimary)
-                    .lineLimit(1)
-                Text("“\(proposal.quote)”")
-                    .font(Typography.subhead.italic())
-                    .foregroundStyle(AppColor.textMuted)
-                    .lineLimit(1)
+        HStack(alignment: .top, spacing: 12) {
+            VStack(alignment: .leading, spacing: 6) {
+                badge
+                VStack(alignment: .leading, spacing: 3) {
+                    Text(proposal.title)
+                        .font(Typography.bodyLarge.weight(.semibold))
+                        .foregroundStyle(AppColor.textPrimary)
+                        .lineLimit(2)
+                    Text("“\(proposal.quote)”")
+                        .font(Typography.subhead.italic())
+                        .foregroundStyle(AppColor.textMuted)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
             Spacer(minLength: 8)
             Toggle("", isOn: Binding(get: { isOn }, set: { _ in onToggle() }))
