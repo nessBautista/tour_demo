@@ -117,7 +117,7 @@ private struct FlowChips: View {
                 .font(.system(size: 9, weight: .bold))
             Text(text)
                 .font(Typography.subhead.weight(.medium))
-                .lineLimit(1)
+                .lineLimit(4)
         }
         .foregroundStyle(isPositive ? AppColor.success : AppColor.negative)
         .padding(.horizontal, 10)
@@ -140,15 +140,18 @@ private struct WrapLayout: Layout {
         var totalWidth: CGFloat = 0
 
         for subview in subviews {
-            let size = subview.sizeThatFits(.unspecified)
-            if rowWidth + size.width > maxWidth, rowWidth > 0 {
+            let intrinsic = subview.sizeThatFits(.unspecified)
+            let width = min(intrinsic.width, maxWidth)   // a too-long chip can't exceed the row
+            // Re-measure height at the clamped width so a wrapped (2-line) chip reserves its true height.
+            let height = subview.sizeThatFits(ProposedViewSize(width: width, height: nil)).height
+            if rowWidth + width > maxWidth, rowWidth > 0 {
                 totalHeight += rowHeight + lineSpacing
                 totalWidth = max(totalWidth, rowWidth - spacing)
                 rowWidth = 0
                 rowHeight = 0
             }
-            rowWidth += size.width + spacing
-            rowHeight = max(rowHeight, size.height)
+            rowWidth += width + spacing
+            rowHeight = max(rowHeight, height)
         }
         totalHeight += rowHeight
         totalWidth = max(totalWidth, rowWidth - spacing)
@@ -161,16 +164,18 @@ private struct WrapLayout: Layout {
         var rowHeight: CGFloat = 0
 
         for subview in subviews {
-            let size = subview.sizeThatFits(.unspecified)
-            if x + size.width > bounds.maxX, x > bounds.minX {
+            let intrinsic = subview.sizeThatFits(.unspecified)
+            let width = min(intrinsic.width, bounds.width)   // clamp so the chip wraps instead of overflowing
+            let height = subview.sizeThatFits(ProposedViewSize(width: width, height: nil)).height
+            if x + width > bounds.maxX, x > bounds.minX {
                 x = bounds.minX
                 y += rowHeight + lineSpacing
                 rowHeight = 0
             }
             subview.place(at: CGPoint(x: x, y: y), anchor: .topLeading,
-                          proposal: ProposedViewSize(size))
-            x += size.width + spacing
-            rowHeight = max(rowHeight, size.height)
+                          proposal: ProposedViewSize(width: width, height: height))
+            x += width + spacing
+            rowHeight = max(rowHeight, height)
         }
     }
 }
