@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tour Debrief Companion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* cold palette (Zillow x BEHR) */
+  --brand:#0041D9; --brand-light:#4F74E8; --brand-dark:#00309F; --brand-tint:#DEE7FB;
+  --ink:#111116; --ink-2:#2C3A47; --muted:#6E7B86;
+  --bg:#ECEFF1; --surface:#F8FAFB; --sunken:#DFE5E9; --divider:#D2D8DC;
+  --success:#1E8A5F; --success-tint:#D6F0E4; --neg:#C44536; --neg-tint:#F4D9D4;
+  --coral:#FF6F61; --on-accent:#FFFFFF; --dark:#111116; --on-dark:#ECEFF1; --on-dark-muted:#8A97A2;
+  --serif:"Source Serif 4","New York",Georgia,serif;
+  --sans:"Inter",-apple-system,system-ui,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono","SF Mono",ui-monospace,Menlo,monospace;
+  --r-s:8px; --r-m:12px; --r-l:16px; --r-xl:20px; --r-xxl:28px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{background:#cdd3d8;font-family:var(--sans);color:var(--ink);overflow:hidden;
+  background-image:radial-gradient(circle at 50% 0%, #dfe5e9, #c4ccd1);}
+
+/* ---- stage / scaler ---- */
+#deck{position:absolute;top:50%;left:50%;width:1280px;height:720px;
+  transform:translate(-50%,-50%);transform-origin:center center;
+  background:var(--bg);border-radius:6px;overflow:hidden;
+  box-shadow:0 30px 80px rgba(17,17,22,.35);}
+
+.slide{position:absolute;inset:0;padding:72px 88px;display:none;
+  flex-direction:column;background:var(--bg);}
+.slide.active{display:flex}
+
+/* slide chrome */
+.eyebrow{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--brand);margin-bottom:18px}
+.eyebrow.muted{color:var(--muted)}
+h1{font-family:var(--serif);font-weight:600;color:var(--ink);line-height:1.08;letter-spacing:-.01em}
+h2{font-family:var(--serif);font-weight:600;color:var(--ink);line-height:1.12}
+.lead{font-size:21px;line-height:1.5;color:var(--ink-2);max-width:62ch}
+.foot{position:absolute;left:88px;right:88px;bottom:34px;display:flex;justify-content:space-between;
+  align-items:center;font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:.04em}
+.tag{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:12px;
+  font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);
+  background:var(--surface);border:1px solid var(--divider);padding:6px 11px;border-radius:999px}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--brand)}
+.jd{text-align:right}
+
+/* reveal animation */
+.reveal{opacity:0;transform:translateY(10px)}
+.slide.active .reveal{animation:rise .55s cubic-bezier(.2,.7,.2,1) forwards}
+.slide.active .reveal:nth-child(2){animation-delay:.06s}
+.slide.active .reveal:nth-child(3){animation-delay:.14s}
+.slide.active .reveal:nth-child(4){animation-delay:.22s}
+.slide.active .reveal:nth-child(5){animation-delay:.30s}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* ===== S0 cover ===== */
+#s0{justify-content:center;align-items:flex-start;
+  background:linear-gradient(160deg,#11163a 0%,#0a0e26 60%,#070a1c 100%);color:var(--on-dark)}
+#s0 .eyebrow{color:#9db0ff}
+#s0 h1{color:#fff;font-size:74px;max-width:18ch}
+#s0 .lead{color:#c3cbe8;margin-top:22px;font-size:23px}
+#s0 .rule{width:64px;height:4px;background:var(--brand-light);border-radius:2px;margin:30px 0 0}
+#s0 .who{position:absolute;left:88px;bottom:48px;color:#aeb8dd;font-family:var(--mono);font-size:13px;letter-spacing:.05em}
+.glyph{position:absolute;right:96px;top:50%;transform:translateY(-50%);opacity:.9}
+.wave{display:flex;align-items:flex-end;gap:9px;height:120px}
+.wave i{width:12px;border-radius:7px;background:var(--brand-light);animation:wv 1.6s ease-in-out infinite}
+.wave i:nth-child(1){height:38%;animation-delay:0s}
+.wave i:nth-child(2){height:70%;animation-delay:.12s}
+.wave i:nth-child(3){height:100%;animation-delay:.24s;background:var(--coral)}
+.wave i:nth-child(4){height:62%;animation-delay:.36s}
+.wave i:nth-child(5){height:30%;animation-delay:.48s}
+@keyframes wv{0%,100%{transform:scaleY(.6)}50%{transform:scaleY(1)}}
+
+/* ===== S1 problem ===== */
+.stat{font-family:var(--serif);font-weight:700;font-size:150px;color:var(--brand);line-height:1;letter-spacing:-.02em}
+.homes{display:flex;gap:14px;margin:30px 0 6px}
+.home{width:56px;height:50px;position:relative;opacity:1}
+.home .roof{position:absolute;top:0;left:6px;width:0;height:0;border-left:22px solid transparent;border-right:22px solid transparent;border-bottom:18px solid var(--ink-2)}
+.home .body{position:absolute;bottom:0;left:9px;width:38px;height:30px;background:var(--sunken);border:2px solid var(--ink-2);border-radius:3px}
+.home.f2{--d:.5s}.home.f3{--d:.8s}.home.f4{--d:1.05s}.home.f5{--d:1.3s}
+.home.f6{--d:1.5s}.home.f7{--d:1.7s}.home.f8{--d:1.9s}
+.slide.active .home[class*=f]{animation:dim 1.4s ease forwards;animation-delay:var(--d,0s)}
+@keyframes dim{to{opacity:.22;filter:grayscale(1)}}
+
+/* ===== S2 funnel ===== */
+.funnel{display:flex;flex-direction:column;gap:7px;margin-top:8px}
+.fstage{margin:0 auto;height:46px;border-radius:var(--r-m);display:flex;align-items:center;
+  justify-content:space-between;padding:0 22px;background:var(--surface);border:1px solid var(--divider);
+  color:var(--ink-2);font-size:16px;font-weight:500;transition:width .5s ease}
+.fstage .kpi{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.fstage.leak{background:#fff4f1;border:2px solid var(--coral);color:var(--ink)}
+.fstage.leak .kpi{color:var(--neg)}
+.slide.active .fstage.leak{animation:pulse 2s ease 1.2s 2}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(255,111,97,0)}50%{box-shadow:0 0 0 8px rgba(255,111,97,.22)}}
+.leakbadge{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--neg);
+  background:var(--neg-tint);padding:4px 10px;border-radius:999px;margin-left:10px}
+/* leak stage: stack the badge UNDER the label so it never overflows the narrow row */
+.leakcol{display:flex;flex-direction:column;align-items:flex-start;gap:5px;line-height:1.2}
+.leakcol .leakbadge{margin-left:0}
+
+/* ===== S3 solution: horizontal pipeline (the product loop) + the bet ===== */
+.pipe2{display:flex;align-items:stretch;margin-top:24px}
+.pcard{flex:1;background:var(--surface);border:1px solid var(--divider);border-radius:var(--r-l);
+  padding:18px;display:flex;flex-direction:column;gap:9px}
+.pchd{display:flex;align-items:center;justify-content:space-between}
+.picon{width:40px;height:40px;border-radius:11px;background:var(--brand-tint);
+  display:flex;align-items:center;justify-content:center}
+.pn{font-family:var(--mono);font-size:13px;font-weight:600;color:var(--brand)}
+.pt{font-family:var(--serif);font-size:20px;color:var(--ink);line-height:1.1}
+.pd{font-size:13.5px;color:var(--ink-2);line-height:1.4}
+.parrow2{display:flex;align-items:center;color:var(--brand);font-size:22px;padding:0 11px}
+.betstrip{margin-top:24px;background:var(--brand-tint);border-left:5px solid var(--brand);border-radius:var(--r-l);
+  padding:22px 26px;font-family:var(--serif);font-size:22px;color:var(--ink);line-height:1.42;
+  display:flex;gap:18px;align-items:flex-start}
+.betstrip .lbl{flex:0 0 auto;font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:#fff;background:var(--brand);padding:7px 13px;border-radius:999px;margin-top:5px}
+.betstrip b{font-weight:700;color:var(--brand-dark)}
+
+/* ===== S4 fit card ===== */
+.card{background:var(--surface);border:1px solid var(--divider);border-radius:var(--r-xl);
+  padding:26px 30px;box-shadow:0 10px 30px rgba(17,17,22,.06)}
+.card .hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px}
+.card .nm{font-family:var(--serif);font-size:26px;color:var(--ink)}
+.card .sub{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.score{font-family:var(--serif);font-size:48px;font-weight:700;color:var(--ink);line-height:1}
+.score span{font-size:18px;color:var(--muted);font-weight:400}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin:6px 0 18px}
+.chip{font-size:13.5px;padding:6px 12px;border-radius:999px}
+.chip.pos{background:var(--success-tint);color:var(--success)}
+.chip.neg{background:var(--neg-tint);color:var(--neg)}
+.dims{display:flex;flex-direction:column;gap:9px}
+.dimrow{display:flex;align-items:center;gap:14px}
+.dimrow .lab{font-family:var(--mono);font-size:12px;color:var(--muted);width:90px;text-transform:uppercase;letter-spacing:.06em}
+.track{flex:1;height:12px;background:var(--sunken);border-radius:999px;overflow:hidden}
+.track i{display:block;height:100%;width:0;background:var(--brand);border-radius:999px;transition:width 1.1s cubic-bezier(.2,.7,.2,1)}
+.slide.active .track i{width:var(--w)}
+.det{font-family:var(--mono);font-size:12px;color:var(--muted);margin-top:16px}
+
+/* ===== merged tech slide: ReAct loop around the deterministic core ===== */
+.react{width:100%;height:auto;max-height:300px;display:block;margin:2px auto 8px}
+.toolcap{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.6}
+.toolcap b{color:var(--ink-2)}
+.toolcap code{color:var(--brand-dark)}
+
+/* ===== S6 demo (real video + synced caption rail) ===== */
+#s6{flex-direction:row;gap:48px;align-items:center}
+.phonewrap{flex:0 0 300px;display:flex;justify-content:center}
+.phone{width:286px;height:600px;background:#111116;border-radius:46px;padding:13px;
+  box-shadow:0 24px 60px rgba(17,17,22,.4);position:relative}
+.notch{position:absolute;top:20px;left:50%;transform:translateX(-50%);width:110px;height:26px;background:#111116;border-radius:14px;z-index:5}
+.demo-screen{width:100%;height:100%;background:#000;border-radius:34px;overflow:hidden;position:relative}
+#demoVideo{width:100%;height:100%;object-fit:cover;display:block}
+.demo-missing{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:9px;color:var(--on-dark-muted);font-family:var(--mono);font-size:12px;text-align:center;padding:24px;
+  background:linear-gradient(160deg,#11163a 0%,#070a1c 100%)}
+.demo-missing .dm-ic{font-size:30px;color:var(--brand-light)}
+.demo-missing b{color:#fff}
+.demo-meta{flex:1}
+/* one-beat-at-a-time stage: only the beat matching the current video time shows,
+   large and centered, and it's replaced as the video crosses the next timestamp. */
+.beatstage{position:relative;margin-top:22px;height:330px}
+.beat{position:absolute;inset:0;opacity:0;transform:translateY(14px);pointer-events:none}
+.beat.on{opacity:1;transform:none;animation:beatIn .5s cubic-bezier(.2,.7,.2,1)}
+@keyframes beatIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.beat .bk{display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:13px;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--brand)}
+.beat .bk .step{background:var(--brand);color:#fff;border-radius:6px;padding:2px 8px;font-size:12px;letter-spacing:.05em}
+.beat .bt{font-family:var(--serif);font-weight:600;font-size:42px;line-height:1.08;color:var(--ink);margin:18px 0 18px}
+.beat .bd{font-size:21px;line-height:1.55;color:var(--ink-2);max-width:32ch}
+.beat .bd b{color:var(--ink)}
+.soundbtn{margin-top:16px;display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);
+  font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--ink-2);background:var(--surface);
+  border:1px solid var(--divider);padding:8px 14px;border-radius:999px;cursor:pointer;transition:.2s}
+.soundbtn:hover{border-color:var(--brand);color:var(--brand)}
+.soundbtn.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+
+/* (S7 close slide removed — the deck ends on the demo) */
+
+/* ===== UI controls ===== */
+#ui{position:fixed;left:0;right:0;bottom:18px;display:flex;justify-content:center;align-items:center;gap:14px;z-index:50}
+.btn{background:rgba(17,17,22,.82);color:#fff;border:none;border-radius:999px;width:40px;height:40px;
+  font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.btn:hover{background:var(--brand)}
+.dots{display:flex;gap:8px;background:rgba(17,17,22,.82);padding:11px 16px;border-radius:999px}
+.dots i{width:9px;height:9px;border-radius:50%;background:#6b7280;cursor:pointer;transition:.2s}
+.dots i.on{background:#fff;width:24px;border-radius:5px}
+.counter{position:fixed;top:18px;right:22px;font-family:var(--mono);font-size:12px;color:#5a6166;z-index:50}
+.hint{position:fixed;bottom:64px;left:50%;transform:translateX(-50%);font-family:var(--mono);font-size:11px;color:#5a6166;z-index:50}
+/* clean-recording mode: fade out controls/hint/counter so only slide content shows */
+#ui,.hint,.counter{transition:opacity .45s ease}
+body.chrome-hidden #ui,body.chrome-hidden .hint,body.chrome-hidden .counter{opacity:0;pointer-events:none}
+</style>
+</head>
+<body>
+
+<div class="counter" id="counter">01 / 08</div>
+
+<div id="deck">
+
+  <!-- S0 COVER -->
+  <section class="slide" id="s0" data-dur="6000">
+    <div class="eyebrow reveal">AN AI-NATIVE POST-TOUR EXPERIENCE</div>
+    <h1 class="reveal">Tour Debrief<br>Companion</h1>
+    <div class="rule reveal"></div>
+    <p class="lead reveal">Turning the messy moment after a home tour into the next confident step.</p>
+    <div class="glyph"><div class="wave"><i></i><i></i><i></i><i></i><i></i></div></div>
+  </section>
+
+  <!-- S1 PROBLEM -->
+  <section class="slide" id="s1" data-dur="15000">
+    <div class="eyebrow reveal">THE PROBLEM</div>
+    <h1 class="reveal" style="font-size:42px;max-width:24ch">Buyers don't decide during the tour. They decide after — and that's where momentum leaks.</h1>
+    <div class="reveal" style="margin-top:26px">
+      <span class="stat">~8</span>
+      <span style="font-family:var(--serif);font-size:30px;color:var(--ink-2);margin-left:12px">homes toured before a buyer transacts</span>
+    </div>
+    <div class="homes reveal">
+      <div class="home"><div class="roof"></div><div class="body"></div></div>
+      <div class="home f2"><div class="roof"></div><div class="body"></div></div>
+      <div class="home f3"><div class="roof"></div><div class="body"></div></div>
+      <div class="home f4"><div class="roof"></div><div class="body"></div></div>
+      <div class="home f5"><div class="roof"></div><div class="body"></div></div>
+      <div class="home f6"><div class="roof"></div><div class="body"></div></div>
+      <div class="home f7"><div class="roof"></div><div class="body"></div></div>
+      <div class="home f8"><div class="roof"></div><div class="body"></div></div>
+    </div>
+    <p class="lead reveal" style="margin-top:22px">Each tour ends in unstructured, emotional impressions that fade within days — so the next step stalls. Post-tour isn't an event; it's a repeated decision cycle.</p>
+    <div class="foot"><span>TOUR DEBRIEF COMPANION</span><span class="jd">SIGNAL · ambiguity → scoped problem</span></div>
+  </section>
+
+  <!-- S2 FUNNEL -->
+  <section class="slide" id="s2" data-dur="20000">
+    <div class="eyebrow reveal">THE FUNNEL · A PRODUCT LENS</div>
+    <h1 class="reveal" style="font-size:33px;max-width:42ch">We modeled touring as a funnel and picked the one leak worth attacking.</h1>
+    <div class="funnel reveal" style="margin-top:14px">
+      <div class="fstage" style="width:760px">Tour intent <span class="kpi">listing → request</span></div>
+      <div class="fstage" style="width:680px">Tour request <span class="kpi">request completion</span></div>
+      <div class="fstage" style="width:600px">Scheduling &amp; matching <span class="kpi">request → confirmation</span></div>
+      <div class="fstage" style="width:520px">Pre-tour prep <span class="kpi">confirmation → attendance</span></div>
+      <div class="fstage leak" style="width:500px;height:auto;padding:10px 22px">
+        <span class="leakcol">Post-tour reflection<span class="leakbadge">THE LEAK</span></span>
+        <span class="kpi">first-tour → second-tour rate</span>
+      </div>
+      <div class="fstage" style="width:360px">Multi-tour loop <span class="kpi">tours per active buyer</span></div>
+    </div>
+    <p class="lead reveal" style="margin:18px auto 0;text-align:center;max-width:64ch;font-size:19px">Upstream stages are <b>coordination</b> problems. First-tour → second-tour is a <b>cognition</b> problem — exactly where an AI-native product earns its place.</p>
+  </section>
+
+  <!-- S3 SOLUTION — horizontal pipeline: the product loop + the bet -->
+  <section class="slide" id="s3" data-dur="20000">
+    <div class="eyebrow reveal">THE SOLUTION &amp; HYPOTHESIS</div>
+    <h1 class="reveal" style="font-size:31px;max-width:34ch">A 30-second voice debrief that becomes memory, comparison, and a next step.</h1>
+    <div class="pipe2 reveal">
+      <div class="pcard">
+        <div class="pchd">
+          <span class="picon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0041D9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><line x1="12" y1="18" x2="12" y2="21"/></svg></span>
+          <span class="pn">01</span>
+        </div>
+        <div class="pt">Voice debrief</div>
+        <div class="pd">20–30s raw reaction, transcribed on-device</div>
+      </div>
+      <div class="parrow2">→</div>
+      <div class="pcard">
+        <div class="pchd">
+          <span class="picon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0041D9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5-9-5Z"/><path d="M3 13l9 5 9-5"/></svg></span>
+          <span class="pn">02</span>
+        </div>
+        <div class="pt">Buyer memory</div>
+        <div class="pd">preferences that evolve after each tour</div>
+      </div>
+      <div class="parrow2">→</div>
+      <div class="pcard">
+        <div class="pchd">
+          <span class="picon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0041D9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="20" x2="5" y2="13"/><line x1="12" y1="20" x2="12" y2="5"/><line x1="19" y1="20" x2="19" y2="15"/></svg></span>
+          <span class="pn">03</span>
+        </div>
+        <div class="pt">Explainable compare</div>
+        <div class="pd">why a home ranks — not a feature matrix</div>
+      </div>
+      <div class="parrow2">→</div>
+      <div class="pcard">
+        <div class="pchd">
+          <span class="picon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0041D9" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 21V4"/><path d="M5 4h12l-2.5 4L17 12H5"/></svg></span>
+          <span class="pn">04</span>
+        </div>
+        <div class="pt">Next best action</div>
+        <div class="pd">one grounded move: book, ask, plan</div>
+      </div>
+    </div>
+    <div class="betstrip reveal"><span class="lbl">The bet</span><span>The win isn't one more booking — it's a <b>better touring experience</b>. If an explainable rank helps the buyer <b>organize what they actually want</b>, every tour becomes a <b>sharper decision</b>.</span></div>
+    <div class="foot"><span class="tag"><span class="dot"></span> AI-NATIVE · interpretation, not a chatbot on CRUD</span><span class="jd">SIGNAL · idea → scope + success metric</span></div>
+  </section>
+
+  <!-- S4 — merged: deterministic core + bounded agent harness -->
+  <section class="slide" id="s4" data-dur="20000">
+    <div class="eyebrow reveal">TECHNICAL · DETERMINISTIC CORE + BOUNDED AGENT</div>
+    <h1 class="reveal" style="font-size:31px;max-width:42ch">A deterministic core does the math — a bounded ReAct agent wraps it, explaining and proposing, never overriding.</h1>
+    <div style="display:flex;gap:36px;margin-top:16px;align-items:center">
+      <div class="card reveal" style="flex:0 0 520px">
+        <div class="hd">
+          <div><div class="nm">412 Alder Court</div><div class="sub">TOURED · profile: yard↑ quiet↑ commute↑ kitchen↑</div></div>
+          <div class="score">82<span>/100</span></div>
+        </div>
+        <div class="chips">
+          <span class="chip pos">+ Quiet street — must-have, met</span>
+          <span class="chip pos">+ Big yard — must-have, met</span>
+          <span class="chip neg">– Commute below a priority</span>
+        </div>
+        <div class="dims">
+          <div class="dimrow"><span class="lab">Quiet</span><div class="track"><i style="--w:100%"></i></div></div>
+          <div class="dimrow"><span class="lab">Light</span><div class="track"><i style="--w:85%"></i></div></div>
+          <div class="dimrow"><span class="lab">Yard</span><div class="track"><i style="--w:80%"></i></div></div>
+          <div class="dimrow"><span class="lab">Kitchen</span><div class="track"><i style="--w:65%"></i></div></div>
+          <div class="dimrow"><span class="lab">Commute</span><div class="track"><i style="--w:40%"></i></div></div>
+        </div>
+        <div class="det">fit = magnitude-weighted average of per-dimension match — pure, isolated, unit-tested</div>
+      </div>
+      <div class="reveal" style="flex:1">
+        <p class="lead" style="font-size:17px;line-height:1.5;margin-bottom:6px"><b>FitScorer</b> is the authority — a pure, unit-tested function. Around it, a tiny <b>ReAct agent</b> turns the buyer's voice into proposed changes.</p>
+        <svg class="react" viewBox="0 0 460 300" role="img" aria-label="ReAct loop: a Query feeds a Thought; the agent takes an Action on a Tool, gets an Observation, and loops back to Thought; when done it emits an Answer.">
+          <defs>
+            <marker id="ah" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#111116"/></marker>
+            <marker id="ahb" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 z" fill="#0041D9"/></marker>
+          </defs>
+          <!-- Query -->
+          <rect x="155" y="6" width="110" height="36" rx="8" fill="#F8FAFB" stroke="#2C3A47" stroke-width="1.5"/>
+          <text x="210" y="29" text-anchor="middle" font-family="Inter,sans-serif" font-size="15" font-weight="600" fill="#111116">Query</text>
+          <line x1="210" y1="42" x2="210" y2="72" stroke="#111116" stroke-width="1.6" marker-end="url(#ah)"/>
+          <!-- Thought (reason) -->
+          <polygon points="210,76 300,134 210,192 120,134" fill="#ffffff" stroke="#0041D9" stroke-width="2"/>
+          <text x="210" y="140" text-anchor="middle" font-family="Inter,sans-serif" font-size="16" font-weight="600" fill="#111116">Thought</text>
+          <!-- Action: Thought -> Tool -->
+          <line x1="162" y1="164" x2="120" y2="242" stroke="#111116" stroke-width="1.6" marker-end="url(#ah)"/>
+          <text x="50" y="206" font-family="Inter,sans-serif" font-style="italic" font-size="13" fill="#0041D9">Action</text>
+          <!-- Observation: Tool -> Thought -->
+          <line x1="158" y1="244" x2="200" y2="184" stroke="#111116" stroke-width="1.6" marker-end="url(#ah)"/>
+          <text x="198" y="232" font-family="Inter,sans-serif" font-style="italic" font-size="13" fill="#0041D9">Observation</text>
+          <!-- Tool -->
+          <rect x="72" y="244" width="120" height="46" rx="13" fill="#F8FAFB" stroke="#2C3A47" stroke-width="1.5"/>
+          <text x="132" y="265" text-anchor="middle" font-family="Inter,sans-serif" font-size="15" font-weight="600" fill="#111116">Tool</text>
+          <text x="132" y="281" text-anchor="middle" font-family="'JetBrains Mono',monospace" font-size="10" fill="#6E7B86">5 constrained</text>
+          <!-- done: Thought -> Answer (exit) -->
+          <line x1="268" y1="156" x2="322" y2="244" stroke="#0041D9" stroke-width="1.6" stroke-dasharray="5 4" marker-end="url(#ahb)"/>
+          <text x="306" y="196" font-family="Inter,sans-serif" font-style="italic" font-size="12" fill="#6E7B86">done</text>
+          <rect x="300" y="246" width="120" height="42" rx="8" fill="#DEE7FB" stroke="#0041D9" stroke-width="1.5"/>
+          <text x="360" y="272" text-anchor="middle" font-family="Inter,sans-serif" font-size="15" font-weight="600" fill="#00309F">Answer</text>
+        </svg>
+        <div class="toolcap"><b>Query</b> = the debrief transcript · <b>Tool</b> = 5 constrained calls <code>add_positive · add_concern · propose_preference_update · add_open_question · done</code> · <b>Answer</b> = confirm → memory → FitScorer re-runs</div>
+      </div>
+    </div>
+    <div class="foot"><span>THE AGENT READS THE SCORE — IT CAN'T OVERRIDE IT</span><span class="jd">SIGNAL · control · correctness · accountability</span></div>
+  </section>
+
+  <!-- S6 DEMO (real video + synced caption rail) -->
+  <section class="slide" id="s6" data-dur="0" data-demo="1">
+    <div class="phonewrap reveal">
+      <div class="phone">
+        <div class="notch"></div>
+        <div class="demo-screen">
+          <video id="demoVideo" muted playsinline preload="auto">
+            <!-- Recorded Simulator walkthrough, web-encoded mp4 (H.264) — plays inline
+                 in every modern browser. -->
+            <source src="assets/demo.mp4" type="video/mp4">
+          </video>
+          <div class="demo-missing" id="demoMissing">
+            <div class="dm-ic">▶</div>
+            <div><b>assets/demo.mp4</b> didn't load</div>
+            <small>recorded Alder-contradiction walkthrough</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="demo-meta reveal">
+      <div class="eyebrow">UX FLOW · LIVE ON DEVICE</div>
+      <div class="beatstage" id="demoCaps">
+        <div class="beat" data-at="0">
+          <div class="bk"><span class="step">01 / 08</span> Voice onboarding</div>
+          <div class="bt">It starts with your voice</div>
+          <div class="bd">The buyer just talks. On-device transcription turns the prompt — <b>"What are you looking for?"</b> — into a structured preference profile. No forms.</div>
+        </div>
+        <div class="beat" data-at="30">
+          <div class="bk"><span class="step">02 / 08</span> Confirm</div>
+          <div class="bt">You approve every change</div>
+          <div class="bd">The app shows back what it heard as cards. <b>Nothing is written to memory until the buyer confirms</b> — human in the loop.</div>
+        </div>
+        <div class="beat" data-at="36">
+          <div class="bk"><span class="step">03 / 08</span> Ranked by fit</div>
+          <div class="bt">Homes ranked by fit</div>
+          <div class="bd">412 Alder Court lands <b>#1 at 82% fit</b> — it has the big yard the buyer said they wanted.</div>
+        </div>
+        <div class="beat" data-at="42">
+          <div class="bk"><span class="step">04 / 08</span> Book a tour</div>
+          <div class="bt">Tour it, then debrief by voice</div>
+          <div class="bd">Booking a tour unlocks a quick voice debrief on that home — once the buyer has seen it in person, they record how it <b>actually</b> felt.</div>
+        </div>
+        <div class="beat" data-at="78">
+          <div class="bk"><span class="step">05 / 08</span> The debrief</div>
+          <div class="bt">It catches the contradiction</div>
+          <div class="bd">Back from the tour, the buyer admits the yard is <b>too much upkeep</b> — and the agent surfaces it as a contradiction of the must-have they stated earlier.</div>
+        </div>
+        <div class="beat" data-at="88">
+          <div class="bk"><span class="step">06 / 08</span> Explainable re-rank</div>
+          <div class="bt">Recomputed — and reshuffled</div>
+          <div class="bd">A deterministic core drops Alder <b>82% → 55%</b>, showing exactly which dimension moved. The list reshuffles — Alder falls from <b>#1 to the bottom</b>.</div>
+        </div>
+        <div class="beat" data-at="97">
+          <div class="bk"><span class="step">07 / 08</span> Plan</div>
+          <div class="bt">One confident next step</div>
+          <div class="bd">Grounded in what the buyer told it, the app proposes the next move — <b>book a second look at Alder</b> to confirm the new read — alongside a fresh home that now fits better.</div>
+        </div>
+        <div class="beat" data-at="104">
+          <div class="bk"><span class="step">08 / 08</span> Observable</div>
+          <div class="bt">Every step is logged</div>
+          <div class="bd"><b>29 structured events</b> capture the whole flow — observable and auditable by design.</div>
+        </div>
+      </div>
+      <button class="soundbtn" id="soundBtn" title="Toggle sound (M)">🔇 Sound off — click for voice</button>
+    </div>
+  </section>
+
+
+</div>
+
+<div class="hint" id="hint">← → or click to advance · P to auto-play · M for sound · H to hide controls</div>
+
+<div id="ui">
+  <button class="btn" id="prev" title="Previous">‹</button>
+  <button class="btn" id="play" title="Auto-play">▶</button>
+  <div class="dots" id="dots"></div>
+  <button class="btn" id="next" title="Next">›</button>
+</div>
+
+<script>
+(function(){
+  var deck=document.getElementById('deck');
+  var slides=[].slice.call(deck.querySelectorAll('.slide'));
+  var dotsWrap=document.getElementById('dots');
+  var counter=document.getElementById('counter');
+  var video=document.getElementById('demoVideo');
+  var demoMissing=document.getElementById('demoMissing');
+  var caps=[].slice.call(document.querySelectorAll('#demoCaps .beat'));
+  var soundBtn=document.getElementById('soundBtn');
+  var i=0, playing=false, timer=null, fallbackTimer=null, videoOK=false;
+
+  // ---- sound toggle ----
+  // Video autoplays MUTED (browsers block autoplay-with-sound). A click on this
+  // button (or the M key) is a user gesture, so unmuting is always permitted.
+  function toggleSound(){
+    video.muted=!video.muted;
+    soundBtn.classList.toggle('on',!video.muted);
+    soundBtn.textContent=video.muted?'🔇 Sound off — click for voice':'🔊 Sound on';
+  }
+  soundBtn.addEventListener('click',function(e){e.stopPropagation();toggleSound();});
+
+  // build dots
+  slides.forEach(function(s,idx){
+    var d=document.createElement('i');
+    d.addEventListener('click',function(e){e.stopPropagation();go(idx);});
+    dotsWrap.appendChild(d);
+  });
+  var dots=[].slice.call(dotsWrap.children);
+
+  function fit(){
+    // Leave breathing room so the deck floats centered — easy to frame a recording
+    // rectangle. Reserve MORE top/bottom (the control bar + hint live in that gap, so
+    // they never sit on the deck) and a comfortable margin on the sides.
+    var mx=72, my=108;
+    var s=Math.min((window.innerWidth-mx*2)/1280, (window.innerHeight-my*2)/720);
+    deck.style.transform='translate(-50%,-50%) scale('+s+')';
+  }
+  window.addEventListener('resize',fit); fit();
+
+  // ---- auto-hide chrome for clean recording ----
+  // Controls/hint/counter fade out when the mouse is idle (~2.6s) and reappear on
+  // movement. Press H to pin them hidden for keyboard-only recording.
+  var idleTimer=null, chromePinned=false;
+  function showChrome(){
+    if(chromePinned) return;
+    document.body.classList.remove('chrome-hidden');
+    clearTimeout(idleTimer);
+    idleTimer=setTimeout(function(){document.body.classList.add('chrome-hidden');},2600);
+  }
+  document.addEventListener('mousemove',showChrome);
+  showChrome();
+
+  // ---- demo video wiring ----
+  video.addEventListener('canplay',function(){ videoOK=true; demoMissing.style.display='none'; });
+  video.addEventListener('error',function(){ videoOK=false; demoMissing.style.display='flex'; });
+  video.addEventListener('timeupdate',function(){ highlightCaps(video.currentTime); });
+  // Demo is the last slide: when the video ends, stop on its final frame (don't loop).
+  video.addEventListener('ended',function(){ if(playing && i<slides.length-1){ next(); } else { playing=false; updatePlay(); } });
+
+  // Show ONLY the beat whose data-at the video has crossed most recently — it
+  // replaces the previous one rather than accumulating.
+  function showBeat(idx){ caps.forEach(function(c,x){ c.classList.toggle('on', x===idx); }); }
+  function highlightCaps(t){
+    var active=0;
+    caps.forEach(function(c,idx){ if(t>=parseFloat(c.getAttribute('data-at'))) active=idx; });
+    showBeat(active);
+  }
+  function resetCaps(){ caps.forEach(function(c){ c.classList.remove('on'); }); }
+
+  function isDemo(sl){ return sl.getAttribute('data-demo')==='1'; }
+
+  function enterDemo(){
+    resetCaps();
+    if(fallbackTimer){clearInterval(fallbackTimer);fallbackTimer=null;}
+    try{ video.currentTime=0; }catch(e){}
+    var p=video.play();
+    if(p&&p.catch){ p.catch(function(){ runFallback(); }); }
+    // if the file never loads, fall back to a timed caption walk so the slide still presents
+    setTimeout(function(){ if(!videoOK){ demoMissing.style.display='flex'; runFallback(); } },700);
+  }
+  function leaveDemo(){
+    try{ video.pause(); }catch(e){}
+    if(fallbackTimer){clearInterval(fallbackTimer);fallbackTimer=null;}
+  }
+  function runFallback(){
+    // step beats every ~2.6s when there's no video; advance at the end if auto-playing
+    if(fallbackTimer) return;
+    var k=0; showBeat(0);
+    fallbackTimer=setInterval(function(){
+      k++;
+      if(k<caps.length){ showBeat(k); }
+      else { clearInterval(fallbackTimer); fallbackTimer=null; if(playing && i<slides.length-1) next(); else { playing=false; updatePlay(); } }
+    },2600);
+  }
+
+  function pad(n){return (n<10?'0':'')+n;}
+  function show(n){
+    var prev=slides[i];
+    if(isDemo(prev)) leaveDemo();
+    prev.classList.remove('active');
+    i=(n+slides.length)%slides.length;
+    var sl=slides[i];
+    void sl.offsetWidth; // restart CSS animations by reflow
+    sl.classList.add('active');
+    dots.forEach(function(d,x){d.classList.toggle('on',x===i);});
+    counter.textContent=pad(i+1)+' / '+pad(slides.length);
+    if(isDemo(sl)){ enterDemo(); }       // demo drives its own advance (video end / fallback)
+    else if(playing){ schedule(); }
+  }
+  function go(n){ if(playing){clearTimeout(timer);} show(n); }
+  function next(){ go(i+1); }
+  function prev(){ go(i-1); }
+
+  function schedule(){
+    clearTimeout(timer);
+    var dur=parseInt(slides[i].getAttribute('data-dur'),10)||8000;
+    if(dur<=0) return; // demo slide: no timed advance
+    timer=setTimeout(function(){
+      if(i===slides.length-1){ playing=false; updatePlay(); return; } // stop at end
+      show(i+1);
+    },dur);
+  }
+  function updatePlay(){ document.getElementById('play').textContent=playing?'❚❚':'▶'; }
+  function togglePlay(){
+    playing=!playing; updatePlay();
+    if(playing){ if(i===slides.length-1){show(0);} else if(isDemo(slides[i])){ enterDemo(); } else {schedule();} }
+    else { clearTimeout(timer); if(fallbackTimer){clearInterval(fallbackTimer);fallbackTimer=null;} }
+  }
+
+  document.getElementById('next').addEventListener('click',function(e){e.stopPropagation();next();});
+  document.getElementById('prev').addEventListener('click',function(e){e.stopPropagation();prev();});
+  document.getElementById('play').addEventListener('click',function(e){e.stopPropagation();togglePlay();});
+  document.body.addEventListener('click',function(e){
+    if(e.target.closest('#ui')||e.target.closest('a'))return; next();
+  });
+  document.addEventListener('keydown',function(e){
+    if(e.key==='ArrowRight'||e.key===' '){e.preventDefault();next();}
+    else if(e.key==='ArrowLeft'){prev();}
+    else if(e.key.toLowerCase()==='p'){togglePlay();}
+    else if(e.key.toLowerCase()==='m'){toggleSound();}
+    else if(e.key.toLowerCase()==='h'){
+      chromePinned=!chromePinned;
+      if(chromePinned){clearTimeout(idleTimer);document.body.classList.add('chrome-hidden');}
+      else{showChrome();}
+    }
+  });
+
+  show(0);
+})();
+</script>
+</body>
+</html>
