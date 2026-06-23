@@ -94,6 +94,12 @@ struct TodayView: View {
             .padding(.vertical, Spacing.l)
         }
         .background(AppColor.appBackground)
+        // Warm the image cache for every listing up front (not just on-screen rows), so
+        // photos survive Today → Compare → Today without a placeholder flash even if the
+        // user navigates away before a row's own load finishes.
+        .onAppear {
+            ImageCache.shared.prefetch(viewModel.state.scored.compactMap { $0.home.imageURL })
+        }
     }
 
     /// Status pill + the one affordance for this home's funnel stage:
